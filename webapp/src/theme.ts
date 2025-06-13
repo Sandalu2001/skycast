@@ -7,8 +7,9 @@ import type {} from "@mui/x-data-grid/themeAugmentation";
 export const generateTheme = (mode: "light" | "dark"): Theme => {
   return createTheme({
     palette: {
+      mode: mode,
       primary: {
-        main: "#00A9FF",
+        main: "#5E8AFA",
       },
       secondary: {
         main: mode == "light" ? "#3D0301" : "",
@@ -26,8 +27,8 @@ export const generateTheme = (mode: "light" | "dark"): Theme => {
         main: mode == "light" ? "#EFB495" : "",
       },
       background: {
-        default: mode == "light" ? "#C4D9FF" : "#453C67", //Main background color
-        paper: mode == "light" ? "#EEF5FF" : "",
+        default: mode == "light" ? "#FFF" : "#453C67", //Main background color
+        paper: mode == "light" ? "#EEF5FF" : "EEF5FF",
       },
     },
     typography: {

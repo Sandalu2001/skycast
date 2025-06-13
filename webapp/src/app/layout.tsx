@@ -29,16 +29,12 @@ export default function RootLayout({
         <CssBaseline />
 
         <body>
-          <Stack sx={{ mx: noNavbarRoutes.includes(pathname) ? 0 : 18 }}>
-            {/* {!noNavbarRoutes.includes(pathname) && <NavBar />} */}
-
-            <Stack
-              sx={{
-                height: "100%",
-              }}
-            >
-              {children}
-            </Stack>
+          <Stack
+            sx={{
+              height: "100vh",
+            }}
+          >
+            {children}
           </Stack>
         </body>
       </ThemeProvider>
