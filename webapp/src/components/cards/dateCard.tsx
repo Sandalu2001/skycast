@@ -30,7 +30,6 @@ export default function DateCard({
       <Stack
         sx={{
           borderRadius: 8,
-          width: 160,
           background: (theme) =>
             isToday
               ? `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
@@ -53,15 +52,16 @@ export default function DateCard({
           0px 25px 50px rgba(0, 0, 0, 0.2) 
         `,
           },
-          p: 3,
+          px: 1,
+          py: 2,
           textAlign: "center",
         }}
       >
         <Stack spacing={1} alignItems="center">
           <Image
             src={"/images/" + imageURL + ".png"}
-            width={198}
-            height={110}
+            width={99}
+            height={55}
             alt="icon"
           />
           <Typography variant="h4" color={isToday ? "white" : "black"}>
