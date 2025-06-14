@@ -12,7 +12,7 @@ export const generateTheme = (mode: "light" | "dark"): Theme => {
         main: "#5E8AFA",
       },
       secondary: {
-        main: mode == "light" ? "#3D0301" : "",
+        main: mode == "light" ? "#F35B90" : "",
       },
       info: {
         main: mode == "light" ? "#A294F9" : "",
