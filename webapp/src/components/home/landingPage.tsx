@@ -1,13 +1,22 @@
 "use client";
 
-import { alpha, Box, Button, Stack, Typography } from "@mui/material";
+import { alpha, Avatar, Box, Button, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import DateCard from "../cards/dateCard";
 import LocationCard from "../cards/locationCard";
 import SecondaryLocationCard from "../cards/secondaryLocationCard";
-import { Sunny } from "@mui/icons-material";
-import DailyForcastSection from "./DailyForcast";
+import {
+  LocationCityRounded,
+  LocationPin,
+  SearchOffRounded,
+  SearchRounded,
+  Sunny,
+} from "@mui/icons-material";
 import CoreDataSection from "./coreData";
+import MetaDataSection from "./metaData";
+import DailyForcastSection from "./dailyForcast";
+import StyledContainer from "../common/styleComponent";
+import CustomTextField from "../common/customTextField";
 
 export default function LandingPage() {
   return (
@@ -15,7 +24,6 @@ export default function LandingPage() {
       sx={{
         width: "100%",
         height: "100%",
-        overflow: "hidden",
         flexDirection: "row",
       }}
     >
@@ -26,66 +34,60 @@ export default function LandingPage() {
           flex: 5,
           background: (theme) => theme.palette.background.paper,
           height: "100%",
-          alignContent: "space-between",
-          justifyContent: "space-between",
         }}
       >
         <Stack
+          spacing={4}
+          flex={1}
           sx={{
-            flexDirection: "row",
-            justifyContent: "space-between",
+            height: "100%",
+            justifyContent: "space-around",
           }}
         >
-          <Stack
-            gap={1}
-            sx={{ width: "100%" }}
-            flexDirection={"row"}
-            justifyContent={"space-between"}
-            alignContent={"space-between"}
-          >
-            <Typography
-              variant="h3"
-              color="primary"
-              sx={{
-                fontWeight: 600,
-                display: "flex",
-                alignItems: "center",
-                gap: 1,
-              }}
-            >
-              <Sunny fontSize="large" />
-              {`Good morning, Sandalu!`}
-            </Typography>
-
-            <Stack gap={2}>
-              <Typography variant="h3" color="primary">
-                07.32 AM
-              </Typography>
-              <Typography
-                variant="h5"
-                color="primary.dark"
-                sx={{ fontWeight: 600 }}
-              >
-                Wednesday,14 Jun 2025
-              </Typography>
-            </Stack>
-          </Stack>
+          <MetaDataSection />
+          <DailyForcastSection />
         </Stack>
-        <DailyForcastSection />
-        <CoreDataSection />
+        <Stack flex={1} sx={{ height: "50%" }}>
+          <CoreDataSection />
+        </Stack>
       </Stack>
 
       {/* Location card */}
       <Stack
         sx={{
           height: "100%",
-          p: 5,
+          py: 8,
+          pl: 5,
+          pr: 8,
+
           flex: 2,
           flexShrink: 0,
           gap: 3,
-          overflow: "auto",
         }}
       >
+        <Stack
+          sx={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <CustomTextField
+            name={"search"}
+            label={"Search"}
+            value={""}
+            onChange={function (
+              event: React.ChangeEvent<HTMLInputElement>
+            ): void {
+              throw new Error("Function not implemented.");
+            }}
+            id={""}
+            type={"text"}
+            startIcon={<SearchRounded />}
+            endIcon={<LocationPin />}
+          />
+          <Avatar />
+        </Stack>
         <LocationCard
           imageURL={"sunny"}
           day={"Today"}
@@ -94,7 +96,23 @@ export default function LandingPage() {
           wind={"5 km/h"}
           humidity={"60%"}
         />
-        <Stack gap={2}>
+        <Stack gap={2} sx={{ overflow: "auto", mx: -3 }}>
+          <SecondaryLocationCard
+            imageURL={"sunny"}
+            day={"Tomorrow"}
+            temperature={"30"}
+            location={"Los Angeles"}
+            wind={"3 km/h"}
+            humidity={"55%"}
+          />
+          <SecondaryLocationCard
+            imageURL={"sunny"}
+            day={"Tomorrow"}
+            temperature={"30"}
+            location={"Los Angeles"}
+            wind={"3 km/h"}
+            humidity={"55%"}
+          />
           <SecondaryLocationCard
             imageURL={"sunny"}
             day={"Tomorrow"}
