@@ -1,6 +1,14 @@
 "use client";
 
-import { alpha, Avatar, Box, Button, Stack, Typography } from "@mui/material";
+import {
+  alpha,
+  Avatar,
+  Box,
+  Button,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Image from "next/image";
 import DateCard from "../cards/dateCard";
 import LocationCard from "../cards/locationCard";
@@ -17,6 +25,7 @@ import MetaDataSection from "./metaData";
 import DailyForcastSection from "./dailyForcast";
 import StyledContainer from "../common/styleComponent";
 import CustomTextField from "../common/customTextField";
+import { Suspense, useEffect } from "react";
 
 export default function LandingPage() {
   return (
@@ -88,6 +97,7 @@ export default function LandingPage() {
           />
           <Avatar />
         </Stack>
+
         <LocationCard
           imageURL={"sunny"}
           day={"Today"}

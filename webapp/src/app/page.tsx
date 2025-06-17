@@ -1,8 +1,6 @@
 import LandingPage from "@/components/home/landingPage";
 import { Box, Divider } from "@mui/material";
 
-import { Suspense } from "react";
-
 export default async function Main() {
   return (
     <main style={{ height: "100%" }}>
