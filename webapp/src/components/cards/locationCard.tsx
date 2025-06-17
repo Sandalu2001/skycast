@@ -1,6 +1,13 @@
 "use client";
 
-import { alpha, Box, CircularProgress, Stack, Typography } from "@mui/material";
+import {
+  alpha,
+  Box,
+  CircularProgress,
+  Skeleton,
+  Stack,
+  Typography,
+} from "@mui/material";
 import Image from "next/image";
 import WindPowerIcon from "@mui/icons-material/WindPower";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
@@ -25,7 +32,7 @@ export function LocationCard({
   humidity,
 }: DataCardProps) {
   const [fetchedLocationData, setFetchedLocationData] =
-    useState<CurrentWeatherData | null>(null);
+    useState<CurrentWeatherData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -34,50 +41,18 @@ export function LocationCard({
       setLoading(true);
       setError(null);
       try {
-        const data = await fetchCurrentWeather(location);
+        const data = await fetchCurrentWeather("Colombo");
         setFetchedLocationData(data);
       } catch (err: any) {
         setError(err.message);
-        setFetchedLocationData(null);
+        setFetchedLocationData(undefined);
       } finally {
         setLoading(false);
       }
     };
 
     getData();
-    console.log("Hello");
   }, [location]);
-
-  if (loading) {
-    return (
-      <Box
-        sx={{
-          height: 200,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-        }}
-      >
-        <Typography variant="body2">Loading {location}...</Typography>
-      </Box>
-    );
-  }
-
-  if (error || !fetchedLocationData) {
-    return (
-      <Box
-        sx={{
-          height: 200,
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          color: "error.main",
-        }}
-      >
-        <Typography variant="body2">Error: {error || "No data"}</Typography>
-      </Box>
-    );
-  }
 
   return (
     <Box>
@@ -104,51 +79,79 @@ export function LocationCard({
           px: 1,
           py: 3,
           textAlign: "center",
+          minHeight: 350,
         }}
       >
-        <Stack spacing={1} alignItems="center">
-          <Image
-            src={"/images/" + imageURL + ".png"}
-            width={216}
-            height={120}
-            alt="icon"
-          />
-          <Typography variant="h6" color={"white"}>
-            {fetchedLocationData.locationName}, {fetchedLocationData.country}
-          </Typography>
-          <Typography variant="h1" color={"white"}>
-            {fetchedLocationData.temperatureC}°C
-            <sup>o</sup>
-          </Typography>
-          <Stack gap={2}>
-            <Stack
-              flexDirection={"row"}
-              alignItems="center"
-              gap={5}
-              sx={{ color: "white" }}
-            >
-              <Stack flexDirection={"row"} alignItems="center" gap={1}>
-                <WindPowerIcon />
-                <Typography variant="body1">Wind</Typography>
+        {(error || !fetchedLocationData) && !loading ? (
+          <Typography variant="h1">Error</Typography>
+        ) : (
+          <Stack spacing={1} alignItems="center">
+            {loading ? (
+              <Skeleton variant="circular" width={100} height={100} />
+            ) : (
+              <Image
+                src={"/images/" + imageURL + ".png"}
+                width={216}
+                height={120}
+                alt="icon"
+              />
+            )}
+            <Typography variant="h6" color={"white"}>
+              {loading ? (
+                <Skeleton variant="text" width={200} />
+              ) : (
+                fetchedLocationData?.locationName +
+                " " +
+                fetchedLocationData?.country
+              )}
+            </Typography>
+            <Typography variant="h1" color={"white"}>
+              {loading ? (
+                <Skeleton variant="text" width={200} />
+              ) : (
+                fetchedLocationData?.temperatureC + "°C"
+              )}
+            </Typography>
+            <Stack gap={2}>
+              <Stack
+                flexDirection={"row"}
+                alignItems="center"
+                gap={5}
+                sx={{ color: "white" }}
+              >
+                <Stack flexDirection={"row"} alignItems="center" gap={1}>
+                  <WindPowerIcon />
+                  <Typography variant="body1">Wind</Typography>
+                </Stack>
+                <Typography variant="body1">
+                  {loading ? (
+                    <Skeleton variant="text" width={50} />
+                  ) : (
+                    fetchedLocationData?.windSpeedKph + " km/h"
+                  )}
+                </Typography>
               </Stack>
-              <Typography variant="body1">{wind}</Typography>
-            </Stack>
-            <Stack
-              flexDirection={"row"}
-              alignItems="center"
-              gap={5}
-              sx={{ color: "white" }}
-            >
-              <Stack flexDirection={"row"} alignItems="center" gap={1}>
-                <WaterDropIcon />
-                <Typography variant="body1">Hum</Typography>
+              <Stack
+                flexDirection={"row"}
+                alignItems="center"
+                gap={5}
+                sx={{ color: "white" }}
+              >
+                <Stack flexDirection={"row"} alignItems="center" gap={1}>
+                  <WaterDropIcon />
+                  <Typography variant="body1">Hum</Typography>
+                </Stack>
+                <Typography variant="body1">
+                  {loading ? (
+                    <Skeleton variant="text" width={50} />
+                  ) : (
+                    fetchedLocationData?.humidity
+                  )}
+                </Typography>
               </Stack>
-              <Typography variant="body1">
-                {fetchedLocationData.humidity}
-              </Typography>
             </Stack>
           </Stack>
-        </Stack>
+        )}
       </Stack>
     </Box>
   );
