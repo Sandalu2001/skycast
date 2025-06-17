@@ -7,6 +7,7 @@ import {
   Card,
   CardContent,
   Stack,
+  Tooltip,
   Typography,
 } from "@mui/material";
 import Image from "next/image";
@@ -16,6 +17,7 @@ export interface DataCardProps {
   imageURL: string;
   day: string;
   temperature: string;
+  condition: string;
   isToday: boolean;
 }
 
@@ -23,10 +25,11 @@ export default function DateCard({
   imageURL,
   day,
   temperature,
+  condition,
   isToday,
 }: DataCardProps) {
   return (
-    <Box>
+    <Tooltip arrow title={<Typography variant="h6">{condition}</Typography>}>
       <Stack
         sx={{
           borderRadius: 8,
@@ -52,16 +55,16 @@ export default function DateCard({
               0px 25px 50px rgba(0, 0, 0, 0.15)
             `,
           },
-          px: 1,
+          px: 2,
           py: 2,
           textAlign: "center",
         }}
       >
-        <Stack spacing={1} alignItems="center">
+        <Stack spacing={0} alignItems="center">
           <Image
             src={"/images/" + imageURL + ".png"}
-            width={99}
-            height={55}
+            width={85}
+            height={85}
             alt="icon"
           />
           <Typography variant="h4" color={isToday ? "white" : "black"}>
@@ -73,6 +76,6 @@ export default function DateCard({
           </Typography>
         </Stack>
       </Stack>
-    </Box>
+    </Tooltip>
   );
 }
