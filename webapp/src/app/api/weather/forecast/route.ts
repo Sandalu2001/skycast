@@ -36,13 +36,14 @@ export async function GET(request: NextRequest) {
     }
 
     const { forecast, location: loc } = data;
+    console.log(forecast);
     const dailyForecasts = forecast.forecastday.map((day: any) => ({
       date: day.date,
       maxTempC: day.day.maxtemp_c,
       minTempC: day.day.mintemp_c,
       avgHumidity: day.day.avghumidity,
       conditionText: day.day.condition.text,
-      conditionIcon: day.day.condition.icon,
+      conditionIconCode: day.day.condition.code,
       uvIndex: day.day.uv,
     }));
 

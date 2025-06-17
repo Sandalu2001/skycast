@@ -17,7 +17,7 @@ export interface DailyForecast {
   minTempC: number;
   avgHumidity: number;
   conditionText: string;
-  conditionIcon: string;
+  conditionIconCode: string;
   uvIndex: number;
 }
 
