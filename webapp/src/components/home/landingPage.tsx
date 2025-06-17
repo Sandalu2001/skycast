@@ -1,33 +1,41 @@
 "use client";
 
-import {
-  alpha,
-  Avatar,
-  Box,
-  Button,
-  Skeleton,
-  Stack,
-  Typography,
-} from "@mui/material";
-import Image from "next/image";
-import DateCard from "../cards/dateCard";
+import { Avatar, Skeleton, Stack, Typography } from "@mui/material";
 import LocationCard from "../cards/locationCard";
 import SecondaryLocationCard from "../cards/secondaryLocationCard";
-import {
-  LocationCityRounded,
-  LocationPin,
-  SearchOffRounded,
-  SearchRounded,
-  Sunny,
-} from "@mui/icons-material";
+import { LocationPin, SearchRounded } from "@mui/icons-material";
 import CoreDataSection from "./coreData";
 import MetaDataSection from "./metaData";
 import DailyForcastSection from "./dailyForcast";
 import StyledContainer from "../common/styleComponent";
 import CustomTextField from "../common/customTextField";
-import { Suspense, useEffect } from "react";
+import { useEffect, useState } from "react";
+import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
 
 export default function LandingPage() {
+  const [fetchedWeatherForecastData, setFetchedWeatherForecastData] =
+    useState<ForecastData>();
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchWeatherForecast("Colombo", 7);
+        setFetchedWeatherForecastData(data);
+      } catch (err: any) {
+        setError(err.message);
+        setFetchedWeatherForecastData(undefined);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getData();
+  }, []);
+
   return (
     <Stack
       sx={{
@@ -54,7 +62,50 @@ export default function LandingPage() {
           }}
         >
           <MetaDataSection />
-          <DailyForcastSection />
+          {loading ? (
+            <Stack
+              sx={{ flexDirection: "row", justifyContent: "space-between" }}
+            >
+              {Array.from({ length: 7 }).map((_, idx) => {
+                return (
+                  <StyledContainer
+                    key={idx}
+                    sx={{ px: 2, py: 2, borderRadius: 8 }}
+                  >
+                    <Stack spacing={1} alignItems="center">
+                      <Skeleton variant="circular" width={70} height={70} />
+                      <Typography variant="h4">
+                        {" "}
+                        <Skeleton variant="text" width={80} />
+                      </Typography>
+                      <Typography variant="h5">
+                        <Skeleton variant="text" width={80} />
+                      </Typography>
+                    </Stack>
+                  </StyledContainer>
+                );
+              })}
+            </Stack>
+          ) : !fetchedWeatherForecastData ? (
+            <StyledContainer
+              sx={{ px: 2, py: 2, borderRadius: 8, flexDirection: "row" }}
+            >
+              <Stack spacing={1} alignItems="center">
+                <Skeleton variant="circular" width={70} height={70} />
+                <Typography variant="h4">
+                  {" "}
+                  <Skeleton variant="text" width={80} />
+                </Typography>
+                <Typography variant="h5">
+                  <Skeleton variant="text" width={80} />
+                </Typography>
+              </Stack>
+            </StyledContainer>
+          ) : (
+            <DailyForcastSection
+              fetchedWeatherForecastData={fetchedWeatherForecastData}
+            />
+          )}
         </Stack>
         <Stack flex={1} sx={{ height: "50%" }}>
           <CoreDataSection />

@@ -1,7 +1,16 @@
-import { Stack } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import DateCard from "../cards/dateCard";
+import { useEffect, useState } from "react";
+import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
+import StyledContainer from "../common/styleComponent";
 
-export default function DailyForcastSection() {
+export interface DailyForcastSectionProps {
+  fetchedWeatherForecastData: ForecastData;
+}
+
+export default function DailyForcastSection({
+  fetchedWeatherForecastData,
+}: DailyForcastSectionProps) {
   return (
     <Stack
       sx={{
@@ -10,48 +19,22 @@ export default function DailyForcastSection() {
         justifyContent: "space-between",
       }}
     >
-      <DateCard
-        imageURL={"sunny"}
-        day={"Sun"}
-        temperature={"29"}
-        isToday={false}
-      />
-
-      <DateCard
-        imageURL={"raining"}
-        day={"Mon"}
-        temperature={"29"}
-        isToday={false}
-      />
-
-      <DateCard
-        imageURL={"slightly-raining"}
-        day={"Tue"}
-        temperature={"29"}
-        isToday={false}
-      />
-
-      <DateCard imageURL={"sunny"} day={"Wed"} temperature={"29"} isToday />
-
-      <DateCard
-        imageURL={"thunderstorm"}
-        day={"Thu"}
-        temperature={"29"}
-        isToday={false}
-      />
-      <DateCard
-        imageURL={"windy"}
-        day={"Fri"}
-        temperature={"29"}
-        isToday={false}
-      />
-
-      <DateCard
-        imageURL={"cloudy"}
-        day={"Sat"}
-        temperature={"29"}
-        isToday={false}
-      />
+      {fetchedWeatherForecastData?.forecast.map((value, index) => {
+        return (
+          <DateCard
+            key={index}
+            imageURL={value.conditionIconCode}
+            day={new Date(value.date).toLocaleDateString("en-US", {
+              weekday: "short",
+            })}
+            condition={value.conditionText}
+            temperature={`${value.minTempC}-${value.maxTempC}`}
+            isToday={
+              new Date(value.date).toDateString() === new Date().toDateString()
+            }
+          />
+        );
+      })}
     </Stack>
   );
 }
