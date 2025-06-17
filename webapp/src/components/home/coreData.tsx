@@ -8,7 +8,9 @@ import {
   IconButton,
   Paper,
   Stack,
+  Tooltip,
   Typography,
+  useTheme,
 } from "@mui/material";
 import Image from "next/image";
 import WindPowerIcon from "@mui/icons-material/WindPower";
@@ -16,7 +18,13 @@ import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import StyledContainer from "../common/styleComponent";
 import SecondaryLocationCard from "../cards/secondaryLocationCard";
 import DayForecastCard from "../cards/dayForecastCard";
-import { Today } from "@mui/icons-material";
+import { Sunny, Today } from "@mui/icons-material";
+import {
+  GaugeContainer,
+  GaugeReferenceArc,
+  GaugeValueArc,
+  useGaugeState,
+} from "@mui/x-charts";
 
 export interface DataCardProps {
   imageURL: string;
@@ -25,6 +33,80 @@ export interface DataCardProps {
   location: string;
   wind: string;
   humidity: string;
+}
+
+function GaugePointer() {
+  const { valueAngle, outerRadius, cx, cy } = useGaugeState();
+
+  if (valueAngle === null) {
+    // No value to display
+    return null;
+  }
+
+  const target = {
+    x: cx + outerRadius * Math.sin(valueAngle),
+    y: cy - outerRadius * Math.cos(valueAngle),
+  };
+  return (
+    <g>
+      <foreignObject x={target.x - 12} y={target.y - 14} width={24} height={24}>
+        <Tooltip
+          title={<Typography variant="body2">10.00 AM</Typography>}
+          arrow
+        >
+          <Sunny
+            sx={{
+              width: 24,
+              height: 24,
+              color: (theme) => theme.palette.warning.main,
+            }}
+          />
+        </Tooltip>
+      </foreignObject>
+    </g>
+  );
+}
+
+function StartPointer() {
+  const { startAngle, outerRadius, cx, cy } = useGaugeState();
+  const theme = useTheme();
+
+  const angleRad = startAngle;
+
+  const target = {
+    x: cx + outerRadius * Math.sin(angleRad),
+    y: cy - outerRadius * Math.cos(angleRad),
+  };
+
+  return (
+    <g>
+      <foreignObject x={target.x - 20} y={target.y} width={70} height={20}>
+        <Typography variant="body2">6.00AM</Typography>
+      </foreignObject>
+    </g>
+  );
+}
+
+function EndPointer() {
+  const { endAngle, outerRadius, cx, cy } = useGaugeState();
+  const theme = useTheme();
+
+  const angleRad = endAngle;
+
+  const target = {
+    x: cx + outerRadius * Math.sin(angleRad),
+    y: cy - outerRadius * Math.cos(angleRad),
+  };
+
+  return (
+    <g>
+      <foreignObject x={target.x - 35} y={target.y} width={50} height={20}>
+        <Typography variant="body2" position={"absolute"}>
+          5.58 PM
+        </Typography>
+      </foreignObject>
+    </g>
+  );
 }
 
 export default function CoreDataSection() {
@@ -36,7 +118,6 @@ export default function CoreDataSection() {
         <StyledContainer sx={{ gap: 1, p: 2, height: "100%" }}>
           <Typography
             variant="h5"
-            textAlign={"left"}
             sx={{
               pl: 2,
               pt: 2,
@@ -112,9 +193,43 @@ export default function CoreDataSection() {
             <StyledContainer
               sx={{
                 height: "100%",
+                display: "flex",
+                justifyContent: "center",
+                alignItems: "center",
+                position: "relative",
               }}
             >
-              <Box></Box>
+              <Typography
+                variant="body1"
+                textAlign={"left"}
+                sx={{
+                  position: "absolute",
+                  fontWeight: 700,
+                  top: 0,
+                  mt: 3,
+                }}
+              >
+                Sunset & Sunshine
+              </Typography>
+              <GaugeContainer
+                sx={(theme) => ({
+                  position: "absolute",
+                  mt: 3,
+                })}
+                width={130}
+                height={130}
+                startAngle={-90}
+                endAngle={90}
+                value={30}
+                innerRadius="110%"
+                outerRadius="104%"
+              >
+                <GaugeReferenceArc strokeDasharray={"3,3"} />
+                <GaugeValueArc />
+                <StartPointer />
+                <GaugePointer />
+                <EndPointer />
+              </GaugeContainer>
             </StyledContainer>
           </Grid>
         </Grid>
