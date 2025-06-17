@@ -1,9 +1,11 @@
 "use client";
 
-import { alpha, Box, Stack, Typography } from "@mui/material";
+import { alpha, Box, CircularProgress, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import WindPowerIcon from "@mui/icons-material/WindPower";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
+import { CurrentWeatherData, fetchCurrentWeather } from "@/lib/weather";
+import { Suspense, useEffect, useState } from "react";
 
 export interface DataCardProps {
   imageURL: string;
@@ -14,7 +16,7 @@ export interface DataCardProps {
   humidity: string;
 }
 
-export default function LocationCard({
+export function LocationCard({
   imageURL,
   day,
   temperature,
@@ -22,6 +24,61 @@ export default function LocationCard({
   wind,
   humidity,
 }: DataCardProps) {
+  const [fetchedLocationData, setFetchedLocationData] =
+    useState<CurrentWeatherData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const getData = async () => {
+      setLoading(true);
+      setError(null);
+      try {
+        const data = await fetchCurrentWeather(location);
+        setFetchedLocationData(data);
+      } catch (err: any) {
+        setError(err.message);
+        setFetchedLocationData(null);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    getData();
+    console.log("Hello");
+  }, [location]);
+
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          height: 200,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Typography variant="body2">Loading {location}...</Typography>
+      </Box>
+    );
+  }
+
+  if (error || !fetchedLocationData) {
+    return (
+      <Box
+        sx={{
+          height: 200,
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          color: "error.main",
+        }}
+      >
+        <Typography variant="body2">Error: {error || "No data"}</Typography>
+      </Box>
+    );
+  }
+
   return (
     <Box>
       <Stack
@@ -57,10 +114,10 @@ export default function LocationCard({
             alt="icon"
           />
           <Typography variant="h6" color={"white"}>
-            {day}
+            {fetchedLocationData.locationName}, {fetchedLocationData.country}
           </Typography>
           <Typography variant="h1" color={"white"}>
-            {temperature}
+            {fetchedLocationData.temperatureC}°C
             <sup>o</sup>
           </Typography>
           <Stack gap={2}>
@@ -86,11 +143,35 @@ export default function LocationCard({
                 <WaterDropIcon />
                 <Typography variant="body1">Hum</Typography>
               </Stack>
-              <Typography variant="body1">{humidity}</Typography>
+              <Typography variant="body1">
+                {fetchedLocationData.humidity}
+              </Typography>
             </Stack>
           </Stack>
         </Stack>
       </Stack>
     </Box>
+  );
+}
+
+export default function LocationCardAsync({
+  imageURL,
+  day,
+  temperature,
+  location,
+  wind,
+  humidity,
+}: DataCardProps) {
+  return (
+    <Suspense fallback={<CircularProgress />}>
+      <LocationCard
+        imageURL={imageURL}
+        day={day}
+        temperature={temperature}
+        location={location}
+        wind={wind}
+        humidity={humidity}
+      />
+    </Suspense>
   );
 }
