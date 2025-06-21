@@ -19,6 +19,20 @@ export interface DailyForecast {
   conditionText: string;
   conditionIconCode: string;
   uvIndex: number;
+  astro: {
+    sunrise: string;
+    sunset: string;
+    moonrise: string;
+    moonset: string;
+  };
+  hour: {
+    time: string;
+    tempC: number;
+    conditionText: string;
+    conditionIconCode: string;
+    windSpeedKph: number;
+    humidity: number;
+  }[];
 }
 
 export interface ForecastData {
