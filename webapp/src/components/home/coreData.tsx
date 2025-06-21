@@ -13,18 +13,15 @@ import {
   useTheme,
 } from "@mui/material";
 import Image from "next/image";
-import WindPowerIcon from "@mui/icons-material/WindPower";
-import WaterDropIcon from "@mui/icons-material/WaterDrop";
 import StyledContainer from "../common/styleComponent";
-import SecondaryLocationCard from "../cards/secondaryLocationCard";
-import DayForecastCard from "../cards/dayForecastCard";
-import { Sunny, Today } from "@mui/icons-material";
+import { Sunny } from "@mui/icons-material";
 import {
   GaugeContainer,
   GaugeReferenceArc,
   GaugeValueArc,
   useGaugeState,
 } from "@mui/x-charts";
+import { ForecastData } from "@/lib/weather";
 
 export interface DataCardProps {
   imageURL: string;
@@ -109,11 +106,101 @@ function EndPointer() {
   );
 }
 
-export default function CoreDataSection() {
+export interface CoreDataSectionProps {
+  fetchedWeatherForecastData: ForecastData | undefined;
+  isLoading: boolean;
+}
+
+export default function CoreDataSection({
+  fetchedWeatherForecastData,
+  isLoading,
+}: CoreDataSectionProps) {
+  if (isLoading) {
+    return (
+      <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
+        {Array.from({ length: 10 }).map((_, index) => (
+          <Stack key={index}>
+            <Stack
+              flexDirection={"row"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Typography variant="h5">
+                {new Date().getHours() > 12
+                  ? new Date().getHours() - 12 + index + ` PM`
+                  : new Date().getHours() + index + ` AM`}
+              </Typography>
+              <Stack>
+                <Image
+                  src={"/images/" + "sunny" + ".png"}
+                  width={54}
+                  height={30}
+                  alt="icon"
+                />
+                <Typography
+                  variant="body2"
+                  color={"primary"}
+                  sx={{ fontWeight: 600 }}
+                >
+                  54 %
+                </Typography>
+              </Stack>
+              <Typography variant="h5" color={"black"}>
+                26
+                <sup>o</sup>
+              </Typography>
+            </Stack>
+            <Divider orientation="horizontal" flexItem />
+          </Stack>
+        ))}
+      </Stack>
+    );
+  }
+
+  if (!isLoading && !fetchedWeatherForecastData) {
+    return (
+      <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
+        {Array.from({ length: 10 }).map((_, index) => (
+          <Stack key={index}>
+            <Stack
+              flexDirection={"row"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Typography variant="h5">
+                {new Date().getHours() > 12
+                  ? new Date().getHours() - 12 + index + ` PM`
+                  : new Date().getHours() + index + ` AM`}
+              </Typography>
+              <Stack>
+                <Image
+                  src={"/images/" + "sunny" + ".png"}
+                  width={54}
+                  height={30}
+                  alt="icon"
+                />
+                <Typography
+                  variant="body2"
+                  color={"primary"}
+                  sx={{ fontWeight: 600 }}
+                >
+                  54 %
+                </Typography>
+              </Stack>
+              <Typography variant="h5" color={"black"}>
+                26
+                <sup>o</sup>
+              </Typography>
+            </Stack>
+            <Divider orientation="horizontal" flexItem />
+          </Stack>
+        ))}
+      </Stack>
+    );
+  }
+
   return (
     <Grid container height={"100%"} spacing={3}>
-      {" "}
-      {/* Added p for padding */}
       <Grid size={4} height={"100%"} sx={{ borderRadius: 6, px: -3 }}>
         <StyledContainer sx={{ gap: 1, p: 2, height: "100%" }}>
           <Typography
@@ -126,42 +213,42 @@ export default function CoreDataSection() {
           >
             Daily Forecast
           </Typography>
+
           <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
-            {Array.from({ length: 10 }).map((_, index) => (
-              <Stack key={index}>
-                <Stack
-                  flexDirection={"row"}
-                  justifyContent={"space-between"}
-                  alignItems={"center"}
-                >
-                  <Typography variant="h5">
-                    {new Date().getHours() > 12
-                      ? new Date().getHours() - 12 + index + ` PM`
-                      : new Date().getHours() + index + ` AM`}
-                  </Typography>
-                  <Stack>
-                    <Image
-                      src={"/images/" + "sunny" + ".png"}
-                      width={54}
-                      height={30}
-                      alt="icon"
-                    />
+            {fetchedWeatherForecastData?.forecast[0].hour.map(
+              (value, index) => (
+                <Stack>
+                  <Stack
+                    flexDirection={"row"}
+                    justifyContent={"space-between"}
+                    alignItems={"center"}
+                  >
+                    <Typography variant="h6" sx={{ maxWidth: 50 }}>
+                      {new Date(value.time).getHours() > 11
+                        ? new Date(value.time).getHours() - 12 + ` PM`
+                        : new Date(value.time).getHours() + ` AM`}
+                    </Typography>
+                    <Stack>
+                      <Image
+                        src={"/images/" + value.conditionIconCode + ".png"}
+                        width={30}
+                        height={30}
+                        alt="icon"
+                      />
+                    </Stack>
                     <Typography
-                      variant="body2"
-                      color={"primary"}
-                      sx={{ fontWeight: 600 }}
+                      variant="h6"
+                      color={"black"}
+                      sx={{ maxWidth: 70 }}
                     >
-                      54 %
+                      {value.tempC}
+                      <sup>o</sup>C
                     </Typography>
                   </Stack>
-                  <Typography variant="h5" color={"black"}>
-                    26
-                    <sup>o</sup>
-                  </Typography>
+                  <Divider orientation="horizontal" flexItem />
                 </Stack>
-                <Divider orientation="horizontal" flexItem />
-              </Stack>
-            ))}
+              )
+            )}
           </Stack>
         </StyledContainer>
       </Grid>
