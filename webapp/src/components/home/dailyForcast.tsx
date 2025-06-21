@@ -5,12 +5,52 @@ import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
 import StyledContainer from "../common/styleComponent";
 
 export interface DailyForcastSectionProps {
-  fetchedWeatherForecastData: ForecastData;
+  fetchedWeatherForecastData: ForecastData | undefined;
+  isLoading: boolean;
 }
 
 export default function DailyForcastSection({
   fetchedWeatherForecastData,
+  isLoading,
 }: DailyForcastSectionProps) {
+  if (isLoading) {
+    return (
+      <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+        {Array.from({ length: 7 }).map((_, idx) => {
+          return (
+            <StyledContainer key={idx} sx={{ px: 2, py: 2, borderRadius: 8 }}>
+              <Stack spacing={1} alignItems="center">
+                <Skeleton variant="circular" width={70} height={70} />
+                <Typography variant="h4">
+                  {" "}
+                  <Skeleton variant="text" width={80} />
+                </Typography>
+                <Typography variant="h5">
+                  <Skeleton variant="text" width={80} />
+                </Typography>
+              </Stack>
+            </StyledContainer>
+          );
+        })}
+      </Stack>
+    );
+  }
+
+  if (!isLoading && !fetchedWeatherForecastData) {
+    <StyledContainer sx={{ px: 2, py: 2, borderRadius: 8 }}>
+      <Stack spacing={1} alignItems="center">
+        <Skeleton variant="circular" width={70} height={70} />
+        <Typography variant="h4">
+          {" "}
+          <Skeleton variant="text" width={80} />
+        </Typography>
+        <Typography variant="h5">
+          <Skeleton variant="text" width={80} />
+        </Typography>
+      </Stack>
+    </StyledContainer>;
+  }
+
   return (
     <Stack
       sx={{
