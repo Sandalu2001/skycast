@@ -1,4 +1,5 @@
 // src/app/api/weather/forecast/route.ts
+import { DailyForecast } from "@/lib/weather";
 import { NextRequest, NextResponse } from "next/server";
 
 const API_KEY = process.env.WEATHER_API_KEY;
@@ -45,12 +46,26 @@ export async function GET(request: NextRequest) {
       conditionText: day.day.condition.text,
       conditionIconCode: day.day.condition.code,
       uvIndex: day.day.uv,
+      astro: {
+        sunrise: day.astro.sunrise,
+        sunset: day.astro.sunset,
+        moonrise: day.astro.moonrise,
+        moonset: day.astro.moonset,
+      },
+      hour: day.hour.map((hour: any) => ({
+        time: hour.time,
+        tempC: hour.temp_c,
+        conditionText: hour.condition.text,
+        conditionIconCode: hour.condition.code,
+        windSpeedKph: hour.wind_kph,
+        humidity: hour.humidity,
+      })),
     }));
 
     return NextResponse.json({
       locationName: loc.name,
       country: loc.country,
-      forecast: dailyForecasts,
+      forecast: dailyForecasts as DailyForecast,
     });
   } catch (error) {
     console.error("Error fetching forecast weather:", error);
