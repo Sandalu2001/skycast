@@ -18,7 +18,7 @@ export interface DataCardProps {
   day: string;
   temperature: string;
   condition: string;
-  isToday: boolean;
+  isClicked: boolean;
 }
 
 export default function DateCard({
@@ -26,7 +26,7 @@ export default function DateCard({
   day,
   temperature,
   condition,
-  isToday,
+  isClicked,
 }: DataCardProps) {
   return (
     <Tooltip arrow title={<Typography variant="h6">{condition}</Typography>}>
@@ -34,7 +34,7 @@ export default function DateCard({
         sx={{
           borderRadius: 8,
           background: (theme) =>
-            isToday
+            isClicked
               ? `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
                   theme.palette.primary.main,
                   0.6
@@ -67,10 +67,10 @@ export default function DateCard({
             height={85}
             alt="icon"
           />
-          <Typography variant="h4" color={isToday ? "white" : "black"}>
+          <Typography variant="h4" color={isClicked ? "white" : "black"}>
             {day}
           </Typography>
-          <Typography variant="h5" color={isToday ? "white" : "black"}>
+          <Typography variant="h5" color={isClicked ? "white" : "black"}>
             {temperature}
             <sup>o</sup>
           </Typography>

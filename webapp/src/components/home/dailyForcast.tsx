@@ -1,4 +1,4 @@
-import { Skeleton, Stack, Typography } from "@mui/material";
+import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import DateCard from "../cards/dateCard";
 import { useEffect, useState } from "react";
 import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
@@ -7,11 +7,15 @@ import StyledContainer from "../common/styleComponent";
 export interface DailyForcastSectionProps {
   fetchedWeatherForecastData: ForecastData | undefined;
   isLoading: boolean;
+  setSelectedDate: (date: string) => void;
+  selectedDate: string;
 }
 
 export default function DailyForcastSection({
   fetchedWeatherForecastData,
   isLoading,
+  setSelectedDate,
+  selectedDate,
 }: DailyForcastSectionProps) {
   if (isLoading) {
     return (
@@ -61,18 +65,30 @@ export default function DailyForcastSection({
     >
       {fetchedWeatherForecastData?.forecast.map((value, index) => {
         return (
-          <DateCard
+          <Box
             key={index}
-            imageURL={value.conditionIconCode}
-            day={new Date(value.date).toLocaleDateString("en-US", {
-              weekday: "short",
-            })}
-            condition={value.conditionText}
-            temperature={`${value.minTempC}-${value.maxTempC}`}
-            isToday={
-              new Date(value.date).toDateString() === new Date().toDateString()
-            }
-          />
+            onClick={() => setSelectedDate(value.date)}
+            sx={{
+              cursor: "pointer",
+              ":active": {
+                transform: "scale(0.90)",
+                transition: "transform 0.1s ease-in-out",
+              },
+            }}
+          >
+            <DateCard
+              imageURL={value.conditionIconCode}
+              day={new Date(value.date).toLocaleDateString("en-US", {
+                weekday: "short",
+              })}
+              condition={value.conditionText}
+              temperature={`${value.minTempC}-${value.maxTempC}`}
+              isClicked={
+                new Date(value.date).toDateString() ===
+                new Date(selectedDate).toDateString()
+              }
+            />
+          </Box>
         );
       })}
     </Stack>
