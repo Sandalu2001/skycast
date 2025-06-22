@@ -1,26 +1,8 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  Divider,
-  Grid,
-  IconButton,
-  Paper,
-  Stack,
-  Tooltip,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { alpha, Box, Divider, Grid, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import StyledContainer from "../common/styleComponent";
-import { Sunny } from "@mui/icons-material";
-import {
-  GaugeContainer,
-  GaugeReferenceArc,
-  GaugeValueArc,
-  useGaugeState,
-} from "@mui/x-charts";
 import { DailyForecast, ForecastData } from "@/lib/weather";
 
 export interface DataCardProps {
@@ -102,7 +84,13 @@ export default function CoreDataSection({
               justifyContent={"space-between"}
               alignItems={"center"}
             >
-              <Typography variant="h5">
+              <Typography
+                variant="h5"
+                sx={{
+                  color: (theme) =>
+                    theme.palette.mode === "dark" ? "white" : "black",
+                }}
+              >
                 {new Date().getHours() > 12
                   ? new Date().getHours() - 12 + index + ` PM`
                   : new Date().getHours() + index + ` AM`}
@@ -144,6 +132,8 @@ export default function CoreDataSection({
               pl: 2,
               pt: 2,
               fontWeight: 700,
+              color: (theme) =>
+                theme.palette.mode === "dark" ? "white" : "black",
             }}
           >
             {selectedDate === new Date().toISOString().split("T")[0]
@@ -165,7 +155,14 @@ export default function CoreDataSection({
                     justifyContent={"space-between"}
                     alignItems={"center"}
                   >
-                    <Typography variant="h6" sx={{ maxWidth: 50 }}>
+                    <Typography
+                      variant="h6"
+                      sx={{
+                        maxWidth: 50,
+                        color: (theme) =>
+                          theme.palette.mode === "dark" ? "white" : "black",
+                      }}
+                    >
                       {new Date(value.time).getHours() > 11
                         ? new Date(value.time).getHours() - 12 + ` PM`
                         : new Date(value.time).getHours() + ` AM`}
@@ -180,8 +177,11 @@ export default function CoreDataSection({
                     </Stack>
                     <Typography
                       variant="h6"
-                      color={"black"}
-                      sx={{ maxWidth: 70 }}
+                      sx={{
+                        maxWidth: 70,
+                        color: (theme) =>
+                          theme.palette.mode === "dark" ? "white" : "black",
+                      }}
                     >
                       {value.tempC}
                       <sup>o</sup>C
@@ -194,7 +194,15 @@ export default function CoreDataSection({
         </StyledContainer>
       </Grid>
       <Grid container size={8} spacing={2} height={"100%"} direction="column">
-        <Typography variant="h5" sx={{ fontWeight: 700, pl: 2 }}>
+        <Typography
+          variant="h5"
+          sx={{
+            fontWeight: 700,
+            pl: 2,
+            color: (theme) =>
+              theme.palette.mode === "dark" ? "white" : "black",
+          }}
+        >
           {selectedDate === new Date().toISOString().split("T")[0]
             ? `Today's Highlight`
             : formatted + ` s Highlight`}
@@ -226,6 +234,8 @@ export default function CoreDataSection({
                       sx={{
                         fontWeight: 700,
                         top: 0,
+                        color: (theme) =>
+                          theme.palette.mode === "dark" ? "white" : "black",
                       }}
                     >
                       Wind
@@ -241,6 +251,8 @@ export default function CoreDataSection({
                       textAlign={"left"}
                       sx={{
                         top: 0,
+                        color: (theme) =>
+                          theme.palette.mode === "dark" ? "white" : "black",
                       }}
                     >
                       {dailyForecast.windSpeed} {" km/h"}
@@ -266,6 +278,8 @@ export default function CoreDataSection({
                       sx={{
                         fontWeight: 700,
                         top: 0,
+                        color: (theme) =>
+                          theme.palette.mode === "dark" ? "white" : "black",
                       }}
                     >
                       Moon Phase
@@ -284,6 +298,8 @@ export default function CoreDataSection({
                         variant="body1"
                         sx={{
                           top: 0,
+                          color: (theme) =>
+                            theme.palette.mode === "dark" ? "white" : "black",
                         }}
                       >
                         {dailyForecast.astro.moonrise}{" "}
@@ -309,6 +325,8 @@ export default function CoreDataSection({
                       sx={{
                         fontWeight: 700,
                         top: 0,
+                        color: (theme) =>
+                          theme.palette.mode === "dark" ? "white" : "black",
                       }}
                     >
                       Sunset & Sunshine
@@ -323,8 +341,22 @@ export default function CoreDataSection({
                       justifyContent={"space-between"}
                       flexDirection={"row"}
                     >
-                      <Typography variant="body2">Sunrise :</Typography>
-                      <Typography variant="body2">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: (theme) =>
+                            theme.palette.mode === "dark" ? "white" : "black",
+                        }}
+                      >
+                        Sunrise :
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: (theme) =>
+                            theme.palette.mode === "dark" ? "white" : "black",
+                        }}
+                      >
                         {dailyForecast.astro.sunrise}
                       </Typography>
                     </Stack>
@@ -333,8 +365,22 @@ export default function CoreDataSection({
                       justifyContent={"space-between"}
                       flexDirection={"row"}
                     >
-                      <Typography variant="body2">Sunrise :</Typography>
-                      <Typography variant="body2">
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: (theme) =>
+                            theme.palette.mode === "dark" ? "white" : "black",
+                        }}
+                      >
+                        Sunrise :
+                      </Typography>
+                      <Typography
+                        variant="body2"
+                        sx={{
+                          color: (theme) =>
+                            theme.palette.mode === "dark" ? "white" : "black",
+                        }}
+                      >
                         {dailyForecast.astro.sunset}
                       </Typography>
                     </Stack>
