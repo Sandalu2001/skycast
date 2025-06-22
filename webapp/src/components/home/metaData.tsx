@@ -10,6 +10,7 @@ import { Sunny } from "@mui/icons-material";
 import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
+import { useThemeMode } from "@/app/layout";
 
 export interface DataCardProps {
   imageURL: string;
@@ -21,68 +22,104 @@ export interface DataCardProps {
 }
 
 export default function MetaDataSection() {
+  const { mode, toggleColorMode } = useThemeMode();
+
   return (
     <Stack sx={{ position: "relative" }}>
       <Stack
-        sx={{
-          flexDirection: "row",
-          justifyContent: "space-between",
-        }}
+        gap={4}
+        sx={{ width: "100%" }}
+        flexDirection={{ xs: "column-reverse", md: "row" }}
+        justifyContent={"space-between"}
+        alignContent={"space-between"}
       >
-        <Stack
-          gap={1}
-          sx={{ width: "100%" }}
-          flexDirection={"row"}
-          justifyContent={"space-between"}
-          alignContent={"space-between"}
+        <Typography
+          color="primary"
+          sx={{
+            typography: { xs: "h4", md: "h3" },
+            fontWeight: 600,
+            display: "flex",
+            alignItems: "center",
+            gap: 1,
+            color: (theme) =>
+              theme.palette.mode === "dark" ? "white" : "primary.main",
+          }}
         >
-          <Typography
-            variant="h3"
-            color="primary"
+          <Sunny fontSize="large" />
+          {new Date().getHours() < 12
+            ? "Good Morning"
+            : new Date().getHours() < 18
+            ? "Good Afternoon"
+            : "Good Evening"}
+        </Typography>
+
+        <Stack
+          gap={2}
+          flexDirection={{ xs: "row-reverse", md: "column" }}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <StyledContainer
             sx={{
-              fontWeight: 600,
-              display: "flex",
-              alignItems: "center",
+              p: 0.3,
+              flexDirection: "row",
               gap: 1,
             }}
+            alignSelf={"end"}
           >
-            <Sunny fontSize="large" />
-            {`Good morning, Sandalu!`}
-          </Typography>
-
-          <Stack gap={2}>
-            <StyledContainer
+            <IconButton
+              onClick={toggleColorMode}
               sx={{
-                p: 0.3,
-                flexDirection: "row",
-                gap: 1,
+                color: mode === "light" ? "white" : "primary.main",
+                background:
+                  mode === "light"
+                    ? (theme) => theme.palette.primary.main
+                    : "transparent",
+                ":hover": {
+                  background:
+                    mode === "light"
+                      ? (theme) => theme.palette.primary.dark
+                      : "default",
+                },
               }}
-              alignSelf={"end"}
             >
-              <IconButton
-                sx={{
-                  color: "white",
-                  background: (theme) => theme.palette.primary.main,
-                  ":hover": {
-                    background: (theme) => theme.palette.primary.main,
-                  },
-                }}
-              >
-                <LightModeIcon />
-              </IconButton>
-              <IconButton>
-                <DarkModeIcon />
-              </IconButton>
-            </StyledContainer>
+              <LightModeIcon />
+            </IconButton>
+            <IconButton
+              onClick={toggleColorMode}
+              sx={{
+                color: mode === "dark" ? "background.default" : "primary.main",
+                background:
+                  mode === "dark"
+                    ? (theme) => theme.palette.primary.main
+                    : "transparent",
+                ":hover": {
+                  background:
+                    mode === "dark"
+                      ? (theme) => theme.palette.primary.dark
+                      : "default",
+                },
+              }}
+            >
+              <DarkModeIcon />
+            </IconButton>
+          </StyledContainer>
 
-            <Typography
-              variant="h5"
-              color="primary.dark"
-              sx={{ fontWeight: 600 }}
-            >
-              Wednesday,14 Jun 2025
-            </Typography>
-          </Stack>
+          <Typography
+            variant="h5"
+            sx={{
+              fontWeight: 600,
+              color: (theme) =>
+                theme.palette.mode === "dark" ? "white" : "primary.main",
+            }}
+          >
+            {`${new Date().toLocaleDateString("en-US", {
+              year: "numeric",
+              weekday: "long",
+              month: "long",
+              day: "numeric",
+            })}`}
+          </Typography>
         </Stack>
       </Stack>
     </Stack>
