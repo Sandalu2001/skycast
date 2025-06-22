@@ -61,6 +61,7 @@ export default function DailyForcastSection({
         background: (theme) => theme.palette.background.paper,
         flexDirection: "row",
         justifyContent: "space-between",
+        overflowX: { xs: "auto", md: "inherit" },
       }}
     >
       {fetchedWeatherForecastData?.forecast.map((value, index) => {

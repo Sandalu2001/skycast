@@ -7,21 +7,25 @@ import { LocationPin, SearchRounded } from "@mui/icons-material";
 import CoreDataSection from "./coreData";
 import MetaDataSection from "./metaData";
 import DailyForcastSection from "./dailyForcast";
-import StyledContainer from "../common/styleComponent";
 import CustomTextField from "../common/customTextField";
 import { useEffect, useState } from "react";
 import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
+import LabelBottomNavigation from "../common/navBar";
 
 export default function LandingPage() {
   const [fetchedWeatherForecastData, setFetchedWeatherForecastData] =
     useState<ForecastData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    new Date().toISOString().split("T")[0]
-  );
 
-  console.log(selectedDate, "selected date");
+  const today = new Date();
+  const year = today.getFullYear();
+  const month = String(today.getMonth() + 1).padStart(2, "0");
+  const day = String(today.getDate()).padStart(2, "0");
+
+  const [selectedDate, setSelectedDate] = useState<string>(
+    `${year}-${month}-${day}`
+  );
 
   useEffect(() => {
     const getData = async () => {
@@ -46,11 +50,12 @@ export default function LandingPage() {
       sx={{
         width: "100%",
         height: "100%",
-        flexDirection: "row",
+        flexDirection: { xs: "column", md: "row" },
       }}
     >
       <Stack
         sx={{
+          display: { xs: "none", md: "flex" },
           p: 8,
           gap: 4,
           flex: 5,
@@ -66,7 +71,13 @@ export default function LandingPage() {
             justifyContent: "space-around",
           }}
         >
-          <MetaDataSection />
+          <Stack
+            sx={{
+              display: { xs: "none", md: "flex" },
+            }}
+          >
+            <MetaDataSection />
+          </Stack>
           <DailyForcastSection
             fetchedWeatherForecastData={fetchedWeatherForecastData}
             isLoading={loading}
@@ -87,15 +98,22 @@ export default function LandingPage() {
       <Stack
         sx={{
           height: "100%",
-          py: 8,
-          pl: 5,
-          pr: 8,
-
+          py: { xs: 6, md: 8 },
+          pl: { xs: 5, md: 5 },
+          pr: { xs: 5, md: 8 },
           flex: 2,
+          background: (theme) => theme.palette.background.default,
           flexShrink: 0,
           gap: 3,
         }}
       >
+        <Stack
+          sx={{
+            display: { xs: "flex", md: "none" },
+          }}
+        >
+          <MetaDataSection />
+        </Stack>
         <Stack
           sx={{
             flexDirection: "row",
@@ -128,7 +146,10 @@ export default function LandingPage() {
           wind={"5 km/h"}
           humidity={"60%"}
         />
-        <Stack gap={2} sx={{ overflow: "auto", mx: -3 }}>
+        <Stack
+          gap={2}
+          sx={{ overflow: "auto", mx: -3, height: { xs: 195, md: "100%" } }}
+        >
           <SecondaryLocationCard
             imageURL={"sunny"}
             day={"Tomorrow"}
@@ -170,6 +191,8 @@ export default function LandingPage() {
             humidity={"55%"}
           />
         </Stack>
+
+        <LabelBottomNavigation />
       </Stack>
     </Stack>
   );
