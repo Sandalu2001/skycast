@@ -12,31 +12,31 @@ export const generateTheme = (mode: "light" | "dark"): Theme => {
         main: "#5E8AFA",
       },
       secondary: {
-        main: mode == "light" ? "#F35B90" : "",
+        main: "#F35B90",
       },
       info: {
-        main: mode == "light" ? "#A294F9" : "",
+        main: mode == "light" ? "#FFFFFF" : "#2A1A3D",
       },
       error: {
-        main: mode == "light" ? "#D35D6E" : "",
+        main: "#D35D6E",
       },
       success: {
-        main: mode == "light" ? "#659287" : "",
+        main: mode == "light" ? "#000000" : "#FFFFFF",
       },
       warning: {
-        main: mode == "light" ? "#EFB495" : "",
+        main: "#EFB495",
       },
       background: {
-        default: mode == "light" ? "#FFF" : "#453C67", //Main background color
-        paper: mode == "light" ? "#EEF5FF" : "EEF5FF",
+        default: mode == "light" ? "#FFF" : "#2A1A3D",
+        paper: mode == "light" ? "#EEF5FF" : "#453C67",
       },
     },
     typography: {
       fontFamily: ["Karla", "sans-serif"].join(","),
       fontSize: 10,
+
       h1: {
         fontWeight: 500,
-        fontSize: 65,
       },
       h2: {
         fontWeight: 500,
