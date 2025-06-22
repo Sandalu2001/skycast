@@ -21,7 +21,7 @@ import {
   GaugeValueArc,
   useGaugeState,
 } from "@mui/x-charts";
-import { ForecastData } from "@/lib/weather";
+import { DailyForecast, ForecastData } from "@/lib/weather";
 
 export interface DataCardProps {
   imageURL: string;
@@ -32,89 +32,24 @@ export interface DataCardProps {
   humidity: string;
 }
 
-function GaugePointer() {
-  const { valueAngle, outerRadius, cx, cy } = useGaugeState();
-
-  if (valueAngle === null) {
-    // No value to display
-    return null;
-  }
-
-  const target = {
-    x: cx + outerRadius * Math.sin(valueAngle),
-    y: cy - outerRadius * Math.cos(valueAngle),
-  };
-  return (
-    <g>
-      <foreignObject x={target.x - 12} y={target.y - 14} width={24} height={24}>
-        <Tooltip
-          title={<Typography variant="body2">10.00 AM</Typography>}
-          arrow
-        >
-          <Sunny
-            sx={{
-              width: 24,
-              height: 24,
-              color: (theme) => theme.palette.warning.main,
-            }}
-          />
-        </Tooltip>
-      </foreignObject>
-    </g>
-  );
-}
-
-function StartPointer() {
-  const { startAngle, outerRadius, cx, cy } = useGaugeState();
-  const theme = useTheme();
-
-  const angleRad = startAngle;
-
-  const target = {
-    x: cx + outerRadius * Math.sin(angleRad),
-    y: cy - outerRadius * Math.cos(angleRad),
-  };
-
-  return (
-    <g>
-      <foreignObject x={target.x - 20} y={target.y} width={70} height={20}>
-        <Typography variant="body2">6.00AM</Typography>
-      </foreignObject>
-    </g>
-  );
-}
-
-function EndPointer() {
-  const { endAngle, outerRadius, cx, cy } = useGaugeState();
-  const theme = useTheme();
-
-  const angleRad = endAngle;
-
-  const target = {
-    x: cx + outerRadius * Math.sin(angleRad),
-    y: cy - outerRadius * Math.cos(angleRad),
-  };
-
-  return (
-    <g>
-      <foreignObject x={target.x - 35} y={target.y} width={50} height={20}>
-        <Typography variant="body2" position={"absolute"}>
-          5.58 PM
-        </Typography>
-      </foreignObject>
-    </g>
-  );
-}
-
 export interface CoreDataSectionProps {
   fetchedWeatherForecastData: ForecastData | undefined;
   isLoading: boolean;
+  selectedDate: string;
 }
 
 export default function CoreDataSection({
   fetchedWeatherForecastData,
   isLoading,
+  selectedDate,
 }: CoreDataSectionProps) {
+  const formatted = new Intl.DateTimeFormat("en-US", {
+    weekday: "short",
+    day: "2-digit",
+    month: "short",
+    timeZone: "Asia/Colombo",
+  }).format(new Date(selectedDate));
+
   if (isLoading) {
     return (
       <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
@@ -211,13 +146,20 @@ export default function CoreDataSection({
               fontWeight: 700,
             }}
           >
-            Daily Forecast
+            {selectedDate === new Date().toISOString().split("T")[0]
+              ? `Today Forecast`
+              : formatted + `  Forecast`}
           </Typography>
 
           <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
-            {fetchedWeatherForecastData?.forecast[0].hour.map(
-              (value, index) => (
-                <Stack>
+            {fetchedWeatherForecastData?.forecast
+              .filter(
+                (dailyForecast: DailyForecast) =>
+                  dailyForecast.date === selectedDate
+              )
+              .flatMap((dailyForecast: DailyForecast) => dailyForecast.hour)
+              .map((value, index: number) => (
+                <Stack key={index}>
                   <Stack
                     flexDirection={"row"}
                     justifyContent={"space-between"}
@@ -247,121 +189,202 @@ export default function CoreDataSection({
                   </Stack>
                   <Divider orientation="horizontal" flexItem />
                 </Stack>
-              )
-            )}
+              ))}
           </Stack>
         </StyledContainer>
       </Grid>
       <Grid container size={8} spacing={2} height={"100%"} direction="column">
         <Typography variant="h5" sx={{ fontWeight: 700, pl: 2 }}>
-          Today's Highlight
+          {selectedDate === new Date().toISOString().split("T")[0]
+            ? `Today's Highlight`
+            : formatted + ` s Highlight`}
         </Typography>
-        <Grid container sx={{ flexGrow: 3 }}>
-          <Grid size={4}>
-            <StyledContainer
-              sx={{
-                height: "100%",
-              }}
-            >
-              <Box></Box>
-            </StyledContainer>
-          </Grid>
 
-          <Grid size={4}>
-            <StyledContainer
-              sx={{
-                height: "100%",
-              }}
-            >
-              <Box></Box>
-            </StyledContainer>
-          </Grid>
-          <Grid size={4}>
-            <StyledContainer
-              sx={{
-                height: "100%",
-                display: "flex",
-                justifyContent: "center",
-                alignItems: "center",
-                position: "relative",
-              }}
-            >
-              <Typography
-                variant="body1"
-                textAlign={"left"}
-                sx={{
-                  position: "absolute",
-                  fontWeight: 700,
-                  top: 0,
-                  mt: 3,
-                }}
-              >
-                Sunset & Sunshine
-              </Typography>
-              <GaugeContainer
-                sx={(theme) => ({
-                  position: "absolute",
-                  mt: 3,
-                })}
-                width={130}
-                height={130}
-                startAngle={-90}
-                endAngle={90}
-                value={30}
-                innerRadius="110%"
-                outerRadius="104%"
-              >
-                <GaugeReferenceArc strokeDasharray={"3,3"} />
-                <GaugeValueArc />
-                <StartPointer />
-                <GaugePointer />
-                <EndPointer />
-              </GaugeContainer>
-            </StyledContainer>
-          </Grid>
-        </Grid>
-        <Grid container sx={{ flexGrow: 1 }}>
-          <Grid size={4}>
-            <StyledContainer
-              sx={{
-                background: (theme) =>
-                  `linear-gradient(-45deg, ${
-                    theme.palette.primary.main
-                  }, ${alpha(theme.palette.primary.main, 0.6)})`,
-                height: "100%",
-              }}
-            >
-              <Box></Box>
-            </StyledContainer>
-          </Grid>
+        {fetchedWeatherForecastData?.forecast
+          .filter(
+            (dailyForecast: DailyForecast) =>
+              dailyForecast.date === selectedDate
+          )
+          .map((dailyForecast: DailyForecast, index: number) => (
+            <>
+              <Grid key={index} container sx={{ flexGrow: 3 }} spacing={2}>
+                <Grid size={4}>
+                  <StyledContainer
+                    sx={{
+                      p: 0,
+                      height: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      alignContent: "space-between",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      textAlign={"left"}
+                      sx={{
+                        fontWeight: 700,
+                        top: 0,
+                      }}
+                    >
+                      Wind
+                    </Typography>
+                    <Image
+                      src={"/images/wind.png"}
+                      width={100}
+                      height={100}
+                      alt="wind phase"
+                    />
+                    <Typography
+                      variant="body1"
+                      textAlign={"left"}
+                      sx={{
+                        top: 0,
+                      }}
+                    >
+                      {dailyForecast.windSpeed} {" km/h"}
+                    </Typography>
+                  </StyledContainer>
+                </Grid>
 
-          <Grid size={4}>
-            <StyledContainer
-              sx={{
-                background: (theme) =>
-                  `linear-gradient(-45deg, ${
-                    theme.palette.primary.main
-                  }, ${alpha(theme.palette.primary.main, 0.6)})`,
-                height: "100%",
-              }}
-            >
-              <Box></Box>
-            </StyledContainer>
-          </Grid>
-          <Grid size={4}>
-            <StyledContainer
-              sx={{
-                background: (theme) =>
-                  `linear-gradient(-45deg, ${
-                    theme.palette.primary.main
-                  }, ${alpha(theme.palette.primary.main, 0.6)})`,
-                height: "100%",
-              }}
-            >
-              <Box></Box>
-            </StyledContainer>
-          </Grid>
-        </Grid>
+                <Grid size={4}>
+                  <StyledContainer
+                    sx={{
+                      p: 0,
+                      height: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      alignContent: "space-between",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      textAlign={"left"}
+                      sx={{
+                        fontWeight: 700,
+                        top: 0,
+                      }}
+                    >
+                      Moon Phase
+                    </Typography>
+                    <Image
+                      src={"/images/moon.png"}
+                      width={100}
+                      height={100}
+                      alt="moon phase"
+                    />
+                    <Stack
+                      flexDirection={"row"}
+                      justifyContent={"space-between"}
+                    >
+                      <Typography
+                        variant="body1"
+                        sx={{
+                          top: 0,
+                        }}
+                      >
+                        {dailyForecast.astro.moonrise}{" "}
+                      </Typography>
+                    </Stack>
+                  </StyledContainer>
+                </Grid>
+                <Grid size={4}>
+                  <StyledContainer
+                    sx={{
+                      p: 0,
+                      height: "100%",
+                      display: "flex",
+                      justifyContent: "center",
+                      alignItems: "center",
+                      position: "relative",
+                      alignContent: "space-between",
+                    }}
+                  >
+                    <Typography
+                      variant="body1"
+                      textAlign={"left"}
+                      sx={{
+                        fontWeight: 700,
+                        top: 0,
+                      }}
+                    >
+                      Sunset & Sunshine
+                    </Typography>
+                    <Image
+                      src={"/images/sunny.png"}
+                      width={100}
+                      height={100}
+                      alt="sunset"
+                    />
+                    <Stack
+                      justifyContent={"space-between"}
+                      flexDirection={"row"}
+                    >
+                      <Typography variant="body2">Sunrise :</Typography>
+                      <Typography variant="body2">
+                        {dailyForecast.astro.sunrise}
+                      </Typography>
+                    </Stack>
+
+                    <Stack
+                      justifyContent={"space-between"}
+                      flexDirection={"row"}
+                    >
+                      <Typography variant="body2">Sunrise :</Typography>
+                      <Typography variant="body2">
+                        {dailyForecast.astro.sunset}
+                      </Typography>
+                    </Stack>
+                  </StyledContainer>
+                </Grid>
+              </Grid>
+              <Grid container sx={{ flexGrow: 6 }} spacing={2}>
+                <Grid size={4}>
+                  <StyledContainer
+                    sx={{
+                      background: (theme) =>
+                        `linear-gradient(-45deg, ${
+                          theme.palette.primary.main
+                        }, ${alpha(theme.palette.primary.main, 0.6)})`,
+                      height: "100%",
+                    }}
+                  >
+                    <Box></Box>
+                  </StyledContainer>
+                </Grid>
+
+                <Grid size={4}>
+                  <StyledContainer
+                    sx={{
+                      background: (theme) =>
+                        `linear-gradient(-45deg, ${
+                          theme.palette.primary.main
+                        }, ${alpha(theme.palette.primary.main, 0.6)})`,
+                      height: "100%",
+                    }}
+                  >
+                    <Box></Box>
+                  </StyledContainer>
+                </Grid>
+                <Grid size={4}>
+                  <StyledContainer
+                    sx={{
+                      background: (theme) =>
+                        `linear-gradient(-45deg, ${
+                          theme.palette.primary.main
+                        }, ${alpha(theme.palette.primary.main, 0.6)})`,
+                      height: "100%",
+                    }}
+                  >
+                    <Box></Box>
+                  </StyledContainer>
+                </Grid>
+              </Grid>
+            </>
+          ))}
       </Grid>
     </Grid>
   );
