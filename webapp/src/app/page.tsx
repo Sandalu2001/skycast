@@ -1,3 +1,4 @@
+import LabelBottomNavigation from "@/components/common/navBar";
 import LandingPage from "@/components/home/landingPage";
 import { Box, Divider } from "@mui/material";
 
