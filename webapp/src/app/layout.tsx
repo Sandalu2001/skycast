@@ -1,43 +1,77 @@
-"use client";
+// src/context/ThemeContext.tsx
+"use client"; // Context Providers that manage state typically need to be client components
 
-import { ThemeProvider } from "@mui/material/styles";
+import React, {
+  createContext,
+  useState,
+  useMemo,
+  useContext,
+  ReactNode,
+} from "react";
+import {
+  ThemeProvider as MuiThemeProvider,
+  createTheme,
+  PaletteMode,
+  CssBaseline,
+  Stack,
+} from "@mui/material";
 import { generateTheme } from "../theme";
-import { usePathname } from "next/navigation";
-import { CssBaseline, Stack } from "@mui/material";
-import { useMemo, useState } from "react";
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const pathname = usePathname();
+interface ThemeContextType {
+  mode: PaletteMode;
+  toggleColorMode: () => void;
+}
 
-  // Define routes where the Navbar should not appear
-  const noNavbarRoutes = ["/login", "/sign-up"];
+const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-  const [mode, setMode] = useState<"dark" | "light">("light");
+export const useThemeMode = () => {
+  const context = useContext(ThemeContext);
+  if (context === undefined) {
+    throw new Error("useThemeMode must be used within a ThemeModeProvider");
+  }
+  return context;
+};
+
+interface ThemeModeProviderProps {
+  children: ReactNode;
+}
+
+const RootLayout: React.FC<ThemeModeProviderProps> = ({ children }) => {
+  const [mode, setMode] = useState<PaletteMode>("light");
+
   const toggleColorMode = () => {
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));
   };
 
   const theme = useMemo(() => generateTheme(mode), [mode]);
 
+  const contextValue = useMemo(
+    () => ({
+      mode,
+      toggleColorMode,
+    }),
+    [mode]
+  );
   return (
     <html lang="en">
-      <ThemeProvider theme={theme}>
+      <body>
         <CssBaseline />
 
-        <body>
-          <Stack
-            sx={{
-              height: "100vh",
-            }}
-          >
-            {children}
-          </Stack>
-        </body>
-      </ThemeProvider>
+        <ThemeContext.Provider value={contextValue}>
+          <MuiThemeProvider theme={theme}>
+            {" "}
+            <Stack
+              sx={{
+                height: { xs: "100vh", md: "100vh" },
+              }}
+            >
+              {children}
+            </Stack>
+          </MuiThemeProvider>
+        </ThemeContext.Provider>
+      </body>
     </html>
   );
-}
+};
+
+export default RootLayout;

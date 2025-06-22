@@ -37,12 +37,12 @@ export default function DateCard({
             isClicked
               ? `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
                   theme.palette.primary.main,
-                  0.6
+                  0.8
                 )})`
               : `linear-gradient(-45deg, ${alpha(
-                  theme.palette.primary.main,
-                  0.1
-                )}, ${theme.palette.common.white})`,
+                  theme.palette.info.main,
+                  0.8
+                )}, ${theme.palette.info.main})`,
           boxShadow: `
             inset 0px 5px 15px rgba(0, 0, 0, 0.08),
             0px 15px 30px rgba(0, 0, 0, 0.10)
@@ -67,10 +67,30 @@ export default function DateCard({
             height={85}
             alt="icon"
           />
-          <Typography variant="h4" color={isClicked ? "white" : "black"}>
+          <Typography
+            variant="h4"
+            sx={{
+              color: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "white"
+                  : isClicked
+                  ? "white"
+                  : "black",
+            }}
+          >
             {day}
           </Typography>
-          <Typography variant="h5" color={isClicked ? "white" : "black"}>
+          <Typography
+            variant="h5"
+            sx={{
+              color: (theme) =>
+                theme.palette.mode === "dark"
+                  ? "white"
+                  : isClicked
+                  ? "white"
+                  : "black",
+            }}
+          >
             {temperature}
             <sup>o</sup>
           </Typography>

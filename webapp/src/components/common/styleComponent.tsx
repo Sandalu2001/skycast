@@ -12,8 +12,8 @@ const StyledContainer = ({ children, sx, ...rest }: StyledContainerProps) => {
       sx={{
         borderRadius: 6,
         background: `linear-gradient(-45deg, ${
-          theme.palette.common.white
-        }, ${alpha(theme.palette.primary.main, 0.1)})`,
+          theme.palette.info.main
+        }, ${alpha(theme.palette.info.main, 0.8)})`,
         boxShadow: `
             inset 0px 5px 15px rgba(0, 0, 0, 0.08),
             0px 15px 30px rgba(0, 0, 0, 0.05)
