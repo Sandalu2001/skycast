@@ -18,6 +18,8 @@ export interface DailyForecast {
   avgHumidity: number;
   conditionText: string;
   conditionIconCode: string;
+  windSpeed: number;
+  chanceOfRain: number;
   uvIndex: number;
   astro: {
     sunrise: string;
