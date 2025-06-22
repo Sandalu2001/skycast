@@ -45,6 +45,8 @@ export async function GET(request: NextRequest) {
       avgHumidity: day.day.avghumidity,
       conditionText: day.day.condition.text,
       conditionIconCode: day.day.condition.code,
+      windSpeed: day.day.maxwind_kph,
+      chanceOfRain: day.day.daily_chance_of_rain,
       uvIndex: day.day.uv,
       astro: {
         sunrise: day.astro.sunrise,
