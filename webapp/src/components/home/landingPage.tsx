@@ -17,6 +17,11 @@ export default function LandingPage() {
     useState<ForecastData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [selectedDate, setSelectedDate] = useState<string>(
+    new Date().toISOString().split("T")[0]
+  );
+
+  console.log(selectedDate, "selected date");
 
   useEffect(() => {
     const getData = async () => {
@@ -62,53 +67,19 @@ export default function LandingPage() {
           }}
         >
           <MetaDataSection />
-          {loading ? (
-            <Stack
-              sx={{ flexDirection: "row", justifyContent: "space-between" }}
-            >
-              {Array.from({ length: 7 }).map((_, idx) => {
-                return (
-                  <StyledContainer
-                    key={idx}
-                    sx={{ px: 2, py: 2, borderRadius: 8 }}
-                  >
-                    <Stack spacing={1} alignItems="center">
-                      <Skeleton variant="circular" width={70} height={70} />
-                      <Typography variant="h4">
-                        {" "}
-                        <Skeleton variant="text" width={80} />
-                      </Typography>
-                      <Typography variant="h5">
-                        <Skeleton variant="text" width={80} />
-                      </Typography>
-                    </Stack>
-                  </StyledContainer>
-                );
-              })}
-            </Stack>
-          ) : !fetchedWeatherForecastData ? (
-            <StyledContainer
-              sx={{ px: 2, py: 2, borderRadius: 8, flexDirection: "row" }}
-            >
-              <Stack spacing={1} alignItems="center">
-                <Skeleton variant="circular" width={70} height={70} />
-                <Typography variant="h4">
-                  {" "}
-                  <Skeleton variant="text" width={80} />
-                </Typography>
-                <Typography variant="h5">
-                  <Skeleton variant="text" width={80} />
-                </Typography>
-              </Stack>
-            </StyledContainer>
-          ) : (
-            <DailyForcastSection
-              fetchedWeatherForecastData={fetchedWeatherForecastData}
-            />
-          )}
+          <DailyForcastSection
+            fetchedWeatherForecastData={fetchedWeatherForecastData}
+            isLoading={loading}
+            setSelectedDate={setSelectedDate}
+            selectedDate={selectedDate}
+          />
         </Stack>
         <Stack flex={1} sx={{ height: "50%" }}>
-          <CoreDataSection />
+          <CoreDataSection
+            fetchedWeatherForecastData={fetchedWeatherForecastData}
+            isLoading={loading}
+            selectedDate={selectedDate}
+          />
         </Stack>
       </Stack>
 
