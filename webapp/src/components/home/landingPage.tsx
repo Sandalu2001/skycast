@@ -7,8 +7,8 @@ import {
   InputAdornment,
   Stack,
   TextField,
-  Typography,
   alpha,
+  debounce,
 } from "@mui/material";
 import LocationCard from "../cards/locationCard";
 import SecondaryLocationCard from "../cards/secondaryLocationCard";
@@ -28,21 +28,12 @@ import {
 import LabelBottomNavigation from "../common/navBar";
 import React from "react";
 
-function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
-  let timeoutId: NodeJS.Timeout;
-  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
-    clearTimeout(timeoutId);
-    timeoutId = setTimeout(() => func.apply(this, args), delay);
-  } as T;
-}
-
 export default function LandingPage() {
   const [currentWeather, setCurrentWeather] = useState<CurrentWeatherData>();
   const [fetchedWeatherForecastData, setFetchedWeatherForecastData] =
     useState<ForecastData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
   const [autocompleteOpen, setAutocompleteOpen] = useState(false);
   const [autocompleteOptions, setAutocompleteOptions] = useState<
     readonly LocationSearchResult[]
@@ -53,6 +44,8 @@ export default function LandingPage() {
   );
   const [inputValue, setInputValue] = useState("");
   const [selectedLocationName, setSelectedLocationName] = useState("Colombo");
+
+  console.log(selectedLocationName, error);
 
   const today = new Date();
   const year = today.getFullYear();

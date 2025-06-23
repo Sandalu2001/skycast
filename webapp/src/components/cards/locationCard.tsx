@@ -1,13 +1,6 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  CircularProgress,
-  Skeleton,
-  Stack,
-  Typography,
-} from "@mui/material";
+import { alpha, Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import WindPowerIcon from "@mui/icons-material/WindPower";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
@@ -23,7 +16,6 @@ export interface DataCardProps {
 export default function LocationCard({
   fetchedLocationData,
   isLoading,
-  selectedDate,
 }: DataCardProps) {
   console.log(fetchedLocationData, isLoading);
   if (isLoading) {
