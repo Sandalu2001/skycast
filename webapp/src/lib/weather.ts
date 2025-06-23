@@ -2,7 +2,7 @@ export interface CurrentWeatherData {
   temperatureC: number;
   feelsLikeC: number;
   conditionText: string;
-  conditionIcon: string;
+  conditionIconCode: string;
   humidity: number;
   windSpeedKph: number;
   uvIndex: number;
@@ -84,7 +84,7 @@ export async function searchLocations(
   query: string
 ): Promise<LocationSearchResult[]> {
   const response = await fetch(
-    `/api/location/search?q=${encodeURIComponent(query)}`
+    `/api/weather/search?q=${encodeURIComponent(query)}`
   );
   if (!response.ok) {
     const errorData = await response.json();

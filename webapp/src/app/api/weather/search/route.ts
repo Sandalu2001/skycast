@@ -13,6 +13,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("q");
+  console.log(query);
   if (!query) {
     return NextResponse.json(
       { error: "Search query parameter (q) is required." },
@@ -21,6 +22,7 @@ export async function GET(request: NextRequest) {
   }
 
   try {
+    console.log(query);
     const response = await fetch(
       `${BASE_URL}/search.json?key=${API_KEY}&q=${query}`
     );

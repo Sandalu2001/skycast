@@ -36,12 +36,11 @@ export async function GET(request: NextRequest) {
     }
 
     const { current, location: loc } = data;
-    console.log(data);
     return NextResponse.json({
       temperatureC: current.temp_c,
       feelsLikeC: current.feelslike_c,
       conditionText: current.condition.text,
-      conditionIcon: current.condition.icon,
+      conditionIconCode: current.condition.code,
       humidity: current.humidity,
       windSpeedKph: current.wind_kph,
       uvIndex: current.uv,
