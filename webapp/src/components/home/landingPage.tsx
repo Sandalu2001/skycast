@@ -1,57 +1,135 @@
 "use client";
 
-import { Avatar, Stack } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  CircularProgress,
+  InputAdornment,
+  Stack,
+  TextField,
+  Typography,
+  alpha,
+} from "@mui/material";
 import LocationCard from "../cards/locationCard";
 import SecondaryLocationCard from "../cards/secondaryLocationCard";
 import { LocationPin, SearchRounded } from "@mui/icons-material";
 import CoreDataSection from "./coreData";
 import MetaDataSection from "./metaData";
 import DailyForcastSection from "./dailyForcast";
-import CustomTextField from "../common/customTextField";
-import { useEffect, useState } from "react";
-import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
+import { useEffect, useState, useCallback } from "react";
+import {
+  fetchCurrentWeather,
+  CurrentWeatherData,
+  fetchWeatherForecast,
+  ForecastData,
+  LocationSearchResult,
+  searchLocations,
+} from "@/lib/weather";
 import LabelBottomNavigation from "../common/navBar";
+import React from "react";
+
+function debounce<T extends (...args: any[]) => void>(func: T, delay: number) {
+  let timeoutId: NodeJS.Timeout;
+  return function (this: ThisParameterType<T>, ...args: Parameters<T>) {
+    clearTimeout(timeoutId);
+    timeoutId = setTimeout(() => func.apply(this, args), delay);
+  } as T;
+}
 
 export default function LandingPage() {
+  const [currentWeather, setCurrentWeather] = useState<CurrentWeatherData>();
   const [fetchedWeatherForecastData, setFetchedWeatherForecastData] =
     useState<ForecastData>();
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    console.log("LandingPage rendered", error);
-  }, [error]);
+  const [autocompleteOpen, setAutocompleteOpen] = useState(false);
+  const [autocompleteOptions, setAutocompleteOptions] = useState<
+    readonly LocationSearchResult[]
+  >([]);
+  const [autocompleteLoading, setAutoCompleteLoading] = useState(false);
+  const [autocompleteError, setAutoCompleteError] = useState<string | null>(
+    null
+  );
+  const [inputValue, setInputValue] = useState("");
+  const [selectedLocationName, setSelectedLocationName] = useState("Colombo");
 
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
   const day = String(today.getDate()).padStart(2, "0");
-
   const [selectedDate, setSelectedDate] = useState<string>(
     `${year}-${month}-${day}`
   );
 
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchWeatherForecast("Colombo", 7);
-        setFetchedWeatherForecastData(data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
-        setFetchedWeatherForecastData(undefined);
-      } finally {
-        setLoading(false);
-      }
-    };
+  const getAllWeatherData = async (location: string) => {
+    setLoading(true);
+    setError(null);
+    try {
+      const [currentData, forecastData] = await Promise.all([
+        fetchCurrentWeather(location),
+        fetchWeatherForecast(location, 7),
+      ]);
+      setCurrentWeather(currentData);
+      setFetchedWeatherForecastData(forecastData);
+      setSelectedLocationName(currentData.locationName);
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "An unexpected error occurred";
+      setError(errorMessage);
+      setCurrentWeather(undefined);
+      setFetchedWeatherForecastData(undefined);
+    } finally {
+      setLoading(false);
+    }
+  };
 
-    getData();
+  useEffect(() => {
+    getAllWeatherData("Colombo");
   }, []);
+
+  const fetchAutocompleteOptions = useCallback(
+    debounce(async (searchTerm: string) => {
+      if (searchTerm.trim() === "") {
+        setAutocompleteOptions([]);
+        setAutoCompleteLoading(false);
+        return;
+      }
+      setAutoCompleteLoading(true);
+      setAutoCompleteError(null);
+      try {
+        const data = await searchLocations(searchTerm);
+        setAutocompleteOptions(data);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error ? err.message : "Failed to search locations";
+        setAutoCompleteError(errorMessage);
+        setAutocompleteOptions([]);
+      } finally {
+        setAutoCompleteLoading(false);
+      }
+    }, 500),
+    []
+  );
+
+  useEffect(() => {
+    if (inputValue && autocompleteOpen) {
+      fetchAutocompleteOptions(inputValue);
+    } else if (!autocompleteOpen) {
+      setAutocompleteOptions([]);
+    }
+  }, [inputValue, autocompleteOpen, fetchAutocompleteOptions]);
+
+  const handleAutocompleteChange = (
+    event: React.SyntheticEvent,
+    newValue: LocationSearchResult | null
+  ) => {
+    setAutocompleteOptions([]);
+    if (newValue) {
+      setSelectedLocationName(newValue.name);
+      getAllWeatherData(newValue.name);
+    }
+  };
 
   return (
     <Stack
@@ -79,13 +157,7 @@ export default function LandingPage() {
             justifyContent: "space-around",
           }}
         >
-          <Stack
-            sx={{
-              display: { xs: "none", md: "flex" },
-            }}
-          >
-            <MetaDataSection />
-          </Stack>
+          <MetaDataSection />
           <DailyForcastSection
             fetchedWeatherForecastData={fetchedWeatherForecastData}
             isLoading={loading}
@@ -102,7 +174,6 @@ export default function LandingPage() {
         </Stack>
       </Stack>
 
-      {/* Location card */}
       <Stack
         sx={{
           height: "100%",
@@ -113,94 +184,138 @@ export default function LandingPage() {
           background: (theme) => theme.palette.background.default,
           flexShrink: 0,
           gap: 3,
+          overflow: "hidden",
         }}
       >
-        <Stack
-          sx={{
-            display: { xs: "flex", md: "none" },
-          }}
-        >
-          <MetaDataSection />
-        </Stack>
-        <Stack
-          sx={{
-            flexDirection: "row",
-            justifyContent: "space-between",
-            alignItems: "center",
-          }}
-        >
-          <CustomTextField
-            name={"search"}
-            label={"Search"}
-            value={""}
-            onChange={function (
-              event: React.ChangeEvent<HTMLInputElement>
-            ): void {
-              console.log(event.target.value);
+        <Stack sx={{ height: "100%", gap: 3 }}>
+          <Stack
+            sx={{
+              display: { xs: "flex", md: "none" },
             }}
-            id={""}
-            type={"text"}
-            startIcon={<SearchRounded />}
-            endIcon={<LocationPin />}
-          />
-          <Avatar />
-        </Stack>
+          >
+            <MetaDataSection />
+          </Stack>
+          <Stack
+            sx={{
+              flexDirection: "row",
+              justifyContent: "space-between",
+              alignItems: "center",
+            }}
+          >
+            <Autocomplete
+              id="location-search-autocomplete"
+              open={autocompleteOpen}
+              onOpen={() => setAutocompleteOpen(true)}
+              onClose={() => setAutocompleteOpen(false)}
+              isOptionEqualToValue={(option, value) => option.id === value.id}
+              getOptionLabel={(option) => `${option.name}, ${option.country}`}
+              options={autocompleteOptions}
+              loading={autocompleteLoading}
+              fullWidth
+              loadingText="Searching locations..."
+              noOptionsText={
+                autocompleteError || "No locations found. Type to search."
+              }
+              onChange={handleAutocompleteChange}
+              onInputChange={(event, newInputValue) => {
+                setInputValue(newInputValue);
+              }}
+              renderInput={(params) => (
+                <TextField
+                  {...params}
+                  label="Search Location"
+                  placeholder="E.g., London"
+                  variant="outlined"
+                  InputProps={{
+                    ...params.InputProps,
+                    startAdornment: (
+                      <InputAdornment position="start">
+                        <SearchRounded />
+                      </InputAdornment>
+                    ),
+                    endAdornment: (
+                      <React.Fragment>
+                        {autocompleteLoading ? (
+                          <CircularProgress color="inherit" size={20} />
+                        ) : null}
+                        {params.InputProps.endAdornment}
+                      </React.Fragment>
+                    ),
+                  }}
+                  sx={{
+                    "& .MuiOutlinedInput-root": {
+                      borderRadius: 5,
+                      backgroundColor: (theme) =>
+                        alpha(theme.palette.action.hover, 0.05),
+                      "& fieldset": {
+                        borderColor: (theme) =>
+                          alpha(theme.palette.grey[500], 0.3),
+                      },
+                      "&:hover fieldset": {
+                        borderColor: (theme) => theme.palette.primary.main,
+                      },
+                      "&.Mui-focused fieldset": {
+                        borderColor: (theme) => theme.palette.primary.main,
+                      },
+                    },
+                  }}
+                />
+              )}
+              renderOption={(props, option) => (
+                <Box component="li" {...props} key={option.id}>
+                  <LocationPin
+                    key={option.id}
+                    sx={{ mr: 1, fontSize: "1rem", color: "text.secondary" }}
+                  />
+                  {option.name}, {option.region ? `${option.region}, ` : ""}
+                  {option.country}
+                </Box>
+              )}
+            />
+          </Stack>
 
-        <LocationCard
-          imageURL={"sunny"}
-          day={"Today"}
-          temperature={"29"}
-          location={"New York"}
-          wind={"5 km/h"}
-          humidity={"60%"}
-        />
-        <Stack
-          gap={2}
-          sx={{ overflow: "auto", mx: -3, height: { xs: 195, md: "100%" } }}
-        >
-          <SecondaryLocationCard
-            imageURL={"sunny"}
-            day={"Tomorrow"}
-            temperature={"30"}
-            location={"Los Angeles"}
-            wind={"3 km/h"}
-            humidity={"55%"}
+          <LocationCard
+            fetchedLocationData={currentWeather}
+            isLoading={loading}
+            selectedDate={selectedDate}
           />
-          <SecondaryLocationCard
-            imageURL={"sunny"}
-            day={"Tomorrow"}
-            temperature={"30"}
-            location={"Los Angeles"}
-            wind={"3 km/h"}
-            humidity={"55%"}
-          />
-          <SecondaryLocationCard
-            imageURL={"sunny"}
-            day={"Tomorrow"}
-            temperature={"30"}
-            location={"Los Angeles"}
-            wind={"3 km/h"}
-            humidity={"55%"}
-          />
-          <SecondaryLocationCard
-            imageURL={"sunny"}
-            day={"Tomorrow"}
-            temperature={"30"}
-            location={"Los Angeles"}
-            wind={"3 km/h"}
-            humidity={"55%"}
-          />
-          <SecondaryLocationCard
-            imageURL={"sunny"}
-            day={"Tomorrow"}
-            temperature={"30"}
-            location={"Los Angeles"}
-            wind={"3 km/h"}
-            humidity={"55%"}
-          />
-        </Stack>
 
-        <LabelBottomNavigation />
+          <Stack
+            gap={2}
+            sx={{
+              overflowY: "auto",
+              flexGrow: 1,
+              mx: -3,
+            }}
+          >
+            <SecondaryLocationCard
+              location="Los Angeles"
+              imageURL={""}
+              day={""}
+              temperature={""}
+              wind={""}
+              humidity={""}
+            />
+            <SecondaryLocationCard
+              location="Paris"
+              imageURL={""}
+              day={""}
+              temperature={""}
+              wind={""}
+              humidity={""}
+            />
+            <SecondaryLocationCard
+              location="Tokyo"
+              imageURL={""}
+              day={""}
+              temperature={""}
+              wind={""}
+              humidity={""}
+            />
+          </Stack>
+
+          <LabelBottomNavigation />
+        </Stack>
       </Stack>
     </Stack>
   );
