@@ -120,7 +120,7 @@ export default function LandingPage() {
     setAutocompleteOptions([]);
     if (newValue) {
       setSelectedLocationName(newValue.name);
-      getAllWeatherData(newValue.name);
+      getAllWeatherData(newValue.name + "," + newValue.country);
     }
   };
 

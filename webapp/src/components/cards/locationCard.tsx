@@ -97,13 +97,13 @@ export default function LocationCard({
         <Stack spacing={1} alignItems="center">
           <Image
             src={"/images/location-not-found.png"}
-            width={150}
-            height={150}
+            width={240}
+            height={240}
             alt="icon"
           />
 
-          <Typography variant="h6" color={"white"}>
-            Location not found
+          <Typography variant="h3" color={"white"}>
+            {`Location not found :(`}
           </Typography>
         </Stack>
       </StyledContainer>
