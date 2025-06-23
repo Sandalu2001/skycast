@@ -23,14 +23,7 @@ export interface DataCardProps {
   humidity: string;
 }
 
-export function LocationCard({
-  imageURL,
-  day,
-  temperature,
-  location,
-  wind,
-  humidity,
-}: DataCardProps) {
+export function LocationCard({ imageURL, location }: DataCardProps) {
   const [fetchedLocationData, setFetchedLocationData] =
     useState<CurrentWeatherData>();
   const [loading, setLoading] = useState(true);
@@ -43,8 +36,12 @@ export function LocationCard({
       try {
         const data = await fetchCurrentWeather("Colombo");
         setFetchedLocationData(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
         setFetchedLocationData(undefined);
       } finally {
         setLoading(false);

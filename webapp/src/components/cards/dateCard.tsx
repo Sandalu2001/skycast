@@ -1,17 +1,7 @@
 "use client";
 
-import {
-  alpha,
-  Box,
-  Button,
-  Card,
-  CardContent,
-  Stack,
-  Tooltip,
-  Typography,
-} from "@mui/material";
+import { alpha, Stack, Tooltip, Typography } from "@mui/material";
 import Image from "next/image";
-import FlashOnIcon from "@mui/icons-material/FlashOn";
 
 export interface DataCardProps {
   imageURL: string;

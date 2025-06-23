@@ -1,7 +1,6 @@
 "use client";
 
-import { alpha, Box, Stack, Typography } from "@mui/material";
-import Image from "next/image";
+import { alpha, Stack, Typography } from "@mui/material";
 import WindPowerIcon from "@mui/icons-material/WindPower";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
 
@@ -15,8 +14,6 @@ export interface DailyForecastCard {
 }
 
 export default function DayForecastCard({
-  imageURL,
-  day,
   temperature,
   location,
   wind,

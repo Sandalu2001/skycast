@@ -1,16 +1,11 @@
 "use client";
 
-import { alpha, Box, Grid, IconButton, Stack, Typography } from "@mui/material";
-import Image from "next/image";
-import WindPowerIcon from "@mui/icons-material/WindPower";
-import WaterDropIcon from "@mui/icons-material/WaterDrop";
+import { IconButton, Stack, Typography } from "@mui/material";
 import StyledContainer from "../common/styleComponent";
-import SecondaryLocationCard from "../cards/secondaryLocationCard";
 import { Sunny } from "@mui/icons-material";
-import LightModeOutlinedIcon from "@mui/icons-material/LightModeOutlined";
 import DarkModeIcon from "@mui/icons-material/DarkMode";
 import LightModeIcon from "@mui/icons-material/LightMode";
-import { useThemeMode } from "@/app/layout";
+import { useThemeMode } from "@/context/themeContext";
 
 export interface DataCardProps {
   imageURL: string;

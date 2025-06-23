@@ -1,4 +1,3 @@
-// src/app/api/weather/forecast/route.ts
 import { DailyForecast } from "@/lib/weather";
 import { NextRequest, NextResponse } from "next/server";
 
@@ -15,7 +14,7 @@ export async function GET(request: NextRequest) {
 
   const { searchParams } = new URL(request.url);
   const location = searchParams.get("location") || "Colombo";
-  const days = searchParams.get("days") || "1"; // Default to 1 day forecast
+  const days = searchParams.get("days") || "1";
 
   try {
     const response = await fetch(
@@ -38,31 +37,57 @@ export async function GET(request: NextRequest) {
 
     const { forecast, location: loc } = data;
     console.log(forecast);
-    const dailyForecasts = forecast.forecastday.map((day: any) => ({
-      date: day.date,
-      maxTempC: day.day.maxtemp_c,
-      minTempC: day.day.mintemp_c,
-      avgHumidity: day.day.avghumidity,
-      conditionText: day.day.condition.text,
-      conditionIconCode: day.day.condition.code,
-      windSpeed: day.day.maxwind_kph,
-      chanceOfRain: day.day.daily_chance_of_rain,
-      uvIndex: day.day.uv,
-      astro: {
-        sunrise: day.astro.sunrise,
-        sunset: day.astro.sunset,
-        moonrise: day.astro.moonrise,
-        moonset: day.astro.moonset,
-      },
-      hour: day.hour.map((hour: any) => ({
-        time: hour.time,
-        tempC: hour.temp_c,
-        conditionText: hour.condition.text,
-        conditionIconCode: hour.condition.code,
-        windSpeedKph: hour.wind_kph,
-        humidity: hour.humidity,
-      })),
-    }));
+    const dailyForecasts = forecast.forecastday.map(
+      (day: {
+        date: string;
+        day: {
+          maxtemp_c: number;
+          mintemp_c: number;
+          avghumidity: number;
+          condition: { text: string; code: number };
+          maxwind_kph: number;
+          daily_chance_of_rain: number;
+          uv: number;
+        };
+        astro: {
+          sunrise: string;
+          sunset: string;
+          moonrise: string;
+          moonset: string;
+        };
+        hour: Array<{
+          time: string;
+          temp_c: number;
+          condition: { text: string; code: number };
+          wind_kph: number;
+          humidity: number;
+        }>;
+      }) => ({
+        date: day.date,
+        maxTempC: day.day.maxtemp_c,
+        minTempC: day.day.mintemp_c,
+        avgHumidity: day.day.avghumidity,
+        conditionText: day.day.condition.text,
+        conditionIconCode: day.day.condition.code,
+        windSpeed: day.day.maxwind_kph,
+        chanceOfRain: day.day.daily_chance_of_rain,
+        uvIndex: day.day.uv,
+        astro: {
+          sunrise: day.astro.sunrise,
+          sunset: day.astro.sunset,
+          moonrise: day.astro.moonrise,
+          moonset: day.astro.moonset,
+        },
+        hour: day.hour.map((hour) => ({
+          time: hour.time,
+          tempC: hour.temp_c,
+          conditionText: hour.condition.text,
+          conditionIconCode: hour.condition.code,
+          windSpeedKph: hour.wind_kph,
+          humidity: hour.humidity,
+        })),
+      })
+    );
 
     return NextResponse.json({
       locationName: loc.name,

@@ -1,6 +1,6 @@
 "use client";
 
-import { Avatar, Skeleton, Stack, Typography } from "@mui/material";
+import { Avatar, Stack } from "@mui/material";
 import LocationCard from "../cards/locationCard";
 import SecondaryLocationCard from "../cards/secondaryLocationCard";
 import { LocationPin, SearchRounded } from "@mui/icons-material";
@@ -18,6 +18,10 @@ export default function LandingPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  useEffect(() => {
+    console.log("LandingPage rendered", error);
+  }, [error]);
+
   const today = new Date();
   const year = today.getFullYear();
   const month = String(today.getMonth() + 1).padStart(2, "0");
@@ -34,8 +38,12 @@ export default function LandingPage() {
       try {
         const data = await fetchWeatherForecast("Colombo", 7);
         setFetchedWeatherForecastData(data);
-      } catch (err: any) {
-        setError(err.message);
+      } catch (err) {
+        if (err instanceof Error) {
+          setError(err.message);
+        } else {
+          setError("An unexpected error occurred");
+        }
         setFetchedWeatherForecastData(undefined);
       } finally {
         setLoading(false);
@@ -128,7 +136,7 @@ export default function LandingPage() {
             onChange={function (
               event: React.ChangeEvent<HTMLInputElement>
             ): void {
-              throw new Error("Function not implemented.");
+              console.log(event.target.value);
             }}
             id={""}
             type={"text"}

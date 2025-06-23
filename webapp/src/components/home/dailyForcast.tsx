@@ -1,7 +1,6 @@
 import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import DateCard from "../cards/dateCard";
-import { useEffect, useState } from "react";
-import { fetchWeatherForecast, ForecastData } from "@/lib/weather";
+import { ForecastData } from "@/lib/weather";
 import StyledContainer from "../common/styleComponent";
 
 export interface DailyForcastSectionProps {

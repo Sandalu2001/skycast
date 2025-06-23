@@ -32,7 +32,14 @@ export async function GET(request: NextRequest) {
         { status: response.status }
       );
     }
-    const locations = data.map((loc: any) => ({
+    const locations = (
+      data as Array<{
+        id: string;
+        name: string;
+        region: string;
+        country: string;
+      }>
+    ).map((loc) => ({
       id: loc.id,
       name: loc.name,
       region: loc.region,

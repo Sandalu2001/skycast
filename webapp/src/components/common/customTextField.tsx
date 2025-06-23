@@ -3,7 +3,6 @@ import {
   InputAdornment,
   Stack,
   TextField,
-  Typography,
   alpha,
 } from "@mui/material";
 import React, { JSX } from "react";

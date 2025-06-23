@@ -23,9 +23,7 @@ export async function GET(request: NextRequest) {
     const data = await response.json();
 
     if (!response.ok) {
-      // Handle specific API errors from weatherapi.com
       if (data.error && data.error.code === 1006) {
-        // "No matching location found"
         return NextResponse.json(
           { error: data.error.message },
           { status: 404 }
@@ -37,7 +35,6 @@ export async function GET(request: NextRequest) {
       );
     }
 
-    // Extract and return only relevant current weather data
     const { current, location: loc } = data;
     console.log(data);
     return NextResponse.json({
