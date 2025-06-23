@@ -11,51 +11,85 @@ import {
 import Image from "next/image";
 import WindPowerIcon from "@mui/icons-material/WindPower";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
-import { CurrentWeatherData, fetchCurrentWeather } from "@/lib/weather";
-import { Suspense, useEffect, useState } from "react";
+import { CurrentWeatherData } from "@/lib/weather";
+import StyledContainer from "../common/styleComponent";
 
 export interface DataCardProps {
-  imageURL: string;
-  day: string;
-  temperature: string;
-  location: string;
-  wind: string;
-  humidity: string;
+  fetchedLocationData: CurrentWeatherData | undefined;
+  isLoading: boolean;
+  selectedDate: string;
 }
 
-export function LocationCard({ imageURL, location }: DataCardProps) {
-  const [fetchedLocationData, setFetchedLocationData] =
-    useState<CurrentWeatherData>();
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    const getData = async () => {
-      setLoading(true);
-      setError(null);
-      try {
-        const data = await fetchCurrentWeather("Colombo");
-        setFetchedLocationData(data);
-      } catch (err) {
-        if (err instanceof Error) {
-          setError(err.message);
-        } else {
-          setError("An unexpected error occurred");
-        }
-        setFetchedLocationData(undefined);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getData();
-  }, [location]);
-
-  return (
-    <Box>
-      <Stack
+export default function LocationCard({
+  fetchedLocationData,
+  isLoading,
+  selectedDate,
+}: DataCardProps) {
+  console.log(fetchedLocationData, isLoading);
+  if (isLoading) {
+    return (
+      <StyledContainer
         sx={{
-          borderRadius: 6,
+          background: (theme) =>
+            `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
+              theme.palette.primary.main,
+              0.6
+            )})`,
+          boxShadow: `
+      inset 0px 5px 15px rgba(0, 0, 0, 0.08), 
+      0px 15px 30px rgba(0, 0, 0, 0.15) 
+    `,
+          minHeight: 370,
+        }}
+      >
+        <Stack spacing={1} alignItems="center">
+          <Skeleton variant="circular" width={120} height={120} />
+
+          <Typography variant="h6" color={"white"}>
+            <Skeleton width={100} />
+          </Typography>
+          <Typography variant="h1" color={"white"}>
+            <Skeleton width={140} />
+          </Typography>
+          <Stack gap={2}>
+            <Stack
+              flexDirection={"row"}
+              alignItems="center"
+              gap={5}
+              sx={{ color: "white" }}
+            >
+              <Stack flexDirection={"row"} alignItems="center" gap={1}>
+                <WindPowerIcon />
+                <Typography variant="body1">Wind</Typography>
+              </Stack>
+              <Typography variant="body1">
+                <Skeleton width={50} />
+              </Typography>
+            </Stack>
+            <Stack
+              flexDirection={"row"}
+              alignItems="center"
+              gap={5}
+              sx={{ color: "white" }}
+            >
+              <Stack flexDirection={"row"} alignItems="center" gap={1}>
+                <WaterDropIcon />
+                <Typography variant="body1">Hum</Typography>
+              </Stack>
+              <Typography variant="body1">
+                <Skeleton width={50} />
+              </Typography>
+            </Stack>
+          </Stack>
+        </Stack>
+      </StyledContainer>
+    );
+  }
+
+  if (!isLoading && !fetchedLocationData) {
+    return (
+      <StyledContainer
+        sx={{
           background: (theme) =>
             `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
               theme.palette.primary.main,
@@ -65,113 +99,87 @@ export function LocationCard({ imageURL, location }: DataCardProps) {
         inset 0px 5px 15px rgba(0, 0, 0, 0.08), 
         0px 15px 30px rgba(0, 0, 0, 0.15) 
       `,
-          transition: "transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out",
-          "&:hover": {
-            transform: "scale(1.01)",
-            boxShadow: `
-          inset 0px 5px 15px rgba(0, 0, 0, 0.08),
-          0px 25px 50px rgba(0, 0, 0, 0.2) 
-        `,
-          },
-          px: 1,
-          py: 3,
-          textAlign: "center",
-          minHeight: 350,
+          minHeight: 370,
         }}
       >
-        {(error || !fetchedLocationData) && !loading ? (
-          <Typography variant="h1">Error</Typography>
-        ) : (
-          <Stack spacing={1} alignItems="center">
-            {loading ? (
-              <Skeleton variant="circular" width={100} height={100} />
-            ) : (
-              <Image
-                src={"/images/" + imageURL + ".png"}
-                width={216}
-                height={120}
-                alt="icon"
-              />
-            )}
-            <Typography variant="h6" color={"white"}>
-              {loading ? (
-                <Skeleton variant="text" width={200} />
-              ) : (
-                fetchedLocationData?.locationName +
-                " " +
-                fetchedLocationData?.country
-              )}
-            </Typography>
-            <Typography variant="h1" color={"white"}>
-              {loading ? (
-                <Skeleton variant="text" width={200} />
-              ) : (
-                fetchedLocationData?.temperatureC + "°C"
-              )}
-            </Typography>
-            <Stack gap={2}>
-              <Stack
-                flexDirection={"row"}
-                alignItems="center"
-                gap={5}
-                sx={{ color: "white" }}
-              >
-                <Stack flexDirection={"row"} alignItems="center" gap={1}>
-                  <WindPowerIcon />
-                  <Typography variant="body1">Wind</Typography>
-                </Stack>
-                <Typography variant="body1">
-                  {loading ? (
-                    <Skeleton variant="text" width={50} />
-                  ) : (
-                    fetchedLocationData?.windSpeedKph + " km/h"
-                  )}
-                </Typography>
-              </Stack>
-              <Stack
-                flexDirection={"row"}
-                alignItems="center"
-                gap={5}
-                sx={{ color: "white" }}
-              >
-                <Stack flexDirection={"row"} alignItems="center" gap={1}>
-                  <WaterDropIcon />
-                  <Typography variant="body1">Hum</Typography>
-                </Stack>
-                <Typography variant="body1">
-                  {loading ? (
-                    <Skeleton variant="text" width={50} />
-                  ) : (
-                    fetchedLocationData?.humidity
-                  )}
-                </Typography>
-              </Stack>
-            </Stack>
-          </Stack>
-        )}
-      </Stack>
-    </Box>
-  );
-}
+        <Stack spacing={1} alignItems="center">
+          <Image
+            src={"/images/location-not-found.png"}
+            width={150}
+            height={150}
+            alt="icon"
+          />
 
-export default function LocationCardAsync({
-  imageURL,
-  day,
-  temperature,
-  location,
-  wind,
-  humidity,
-}: DataCardProps) {
+          <Typography variant="h6" color={"white"}>
+            Location not found
+          </Typography>
+        </Stack>
+      </StyledContainer>
+    );
+  }
+
   return (
-    <Suspense fallback={<CircularProgress />}>
-      <LocationCard
-        imageURL={imageURL}
-        day={day}
-        temperature={temperature}
-        location={location}
-        wind={wind}
-        humidity={humidity}
-      />
-    </Suspense>
+    <StyledContainer
+      sx={{
+        background: (theme) =>
+          `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
+            theme.palette.primary.main,
+            0.6
+          )})`,
+        boxShadow: `
+        inset 0px 5px 15px rgba(0, 0, 0, 0.08),
+        0px 15px 30px rgba(0, 0, 0, 0.15)
+      `,
+        minHeight: 370,
+      }}
+    >
+      <Stack spacing={1} alignItems="center">
+        <Image
+          src={"/images/" + fetchedLocationData?.conditionIconCode + ".png"}
+          width={120}
+          height={120}
+          alt="icon"
+        />
+
+        <Typography variant="h6" color={"white"}>
+          {fetchedLocationData?.locationName +
+            " " +
+            fetchedLocationData?.country}
+        </Typography>
+        <Typography variant="h1" color={"white"}>
+          {fetchedLocationData?.temperatureC + "°C"}
+        </Typography>
+        <Stack gap={2}>
+          <Stack
+            flexDirection={"row"}
+            alignItems="center"
+            gap={5}
+            sx={{ color: "white" }}
+          >
+            <Stack flexDirection={"row"} alignItems="center" gap={1}>
+              <WindPowerIcon />
+              <Typography variant="body1">Wind</Typography>
+            </Stack>
+            <Typography variant="body1">
+              {fetchedLocationData?.windSpeedKph + " km/h"}
+            </Typography>
+          </Stack>
+          <Stack
+            flexDirection={"row"}
+            alignItems="center"
+            gap={5}
+            sx={{ color: "white" }}
+          >
+            <Stack flexDirection={"row"} alignItems="center" gap={1}>
+              <WaterDropIcon />
+              <Typography variant="body1">Hum</Typography>
+            </Stack>
+            <Typography variant="body1">
+              {fetchedLocationData?.humidity}
+            </Typography>
+          </Stack>
+        </Stack>
+      </Stack>
+    </StyledContainer>
   );
 }
