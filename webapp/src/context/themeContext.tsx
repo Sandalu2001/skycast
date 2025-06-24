@@ -17,7 +17,6 @@ interface ThemeContextType {
 
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
-// EXPORT THE HOOK FROM HERE
 export const useThemeMode = () => {
   const context = useContext(ThemeContext);
   if (context === undefined) {
@@ -33,7 +32,7 @@ interface ThemeModeProviderProps {
 export const ThemeModeProvider: React.FC<ThemeModeProviderProps> = ({
   children,
 }) => {
-  const [mode, setMode] = useState<PaletteMode>("light");
+  const [mode, setMode] = useState<PaletteMode>("dark");
 
   const toggleColorMode = () => {
     setMode((prevMode) => (prevMode === "light" ? "dark" : "light"));

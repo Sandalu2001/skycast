@@ -102,7 +102,7 @@ export default function LocationCard({
             alt="icon"
           />
 
-          <Typography variant="h3" color={"white"}>
+          <Typography variant="h5" color={"white"}>
             {`Location not found :(`}
           </Typography>
         </Stack>

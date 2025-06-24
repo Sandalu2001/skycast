@@ -25,7 +25,6 @@ import {
   LocationSearchResult,
   searchLocations,
 } from "@/lib/weather";
-import LabelBottomNavigation from "../common/navBar";
 import React from "react";
 
 export default function LandingPage() {
@@ -306,8 +305,6 @@ export default function LandingPage() {
               humidity={""}
             />
           </Stack>
-
-          <LabelBottomNavigation />
         </Stack>
       </Stack>
     </Stack>
