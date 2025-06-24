@@ -44,6 +44,17 @@ export default function LandingPage() {
   const [inputValue, setInputValue] = useState("");
   const [selectedLocationName, setSelectedLocationName] = useState("Colombo");
 
+  const [newYorkWeather, setNewYorkWeather] =
+    useState<CurrentWeatherData | null>(null);
+  const [londonWeather, setLondonWeather] = useState<CurrentWeatherData | null>(
+    null
+  );
+  const [secondaryLocationsLoading, setSecondaryLocationsLoading] =
+    useState(true);
+  const [secondaryLocationsError, setSecondaryLocationsError] = useState<
+    string | null
+  >(null);
+
   console.log(selectedLocationName, error);
 
   const today = new Date();
@@ -77,7 +88,54 @@ export default function LandingPage() {
   };
 
   useEffect(() => {
-    getAllWeatherData("Colombo");
+    const fetchInitialData = async () => {
+      setLoading(true);
+      setSecondaryLocationsLoading(true);
+      setError(null);
+      setSecondaryLocationsError(null);
+
+      try {
+        const [colomboCurrent, colomboForecast] = await Promise.all([
+          fetchCurrentWeather("Colombo"),
+          fetchWeatherForecast("Colombo", 7),
+        ]);
+        setCurrentWeather(colomboCurrent);
+        setFetchedWeatherForecastData(colomboForecast);
+        setSelectedLocationName(colomboCurrent.locationName);
+
+        const [nyData, londonData] = await Promise.all([
+          fetchCurrentWeather("New York").catch((err) => {
+            console.error("Error fetching New York weather:", err);
+            setSecondaryLocationsError((prev) =>
+              prev ? `${prev}, NY Error` : "NY Error"
+            );
+          }),
+          fetchCurrentWeather("London").catch((err) => {
+            console.error("Error fetching London weather:", err);
+            setSecondaryLocationsError((prev) =>
+              prev ? `${prev}, London Error` : "London Error"
+            );
+            return null;
+          }),
+        ]);
+
+        if (nyData) setNewYorkWeather(nyData);
+        if (londonData) setLondonWeather(londonData);
+      } catch (err) {
+        const errorMessage =
+          err instanceof Error
+            ? err.message
+            : "An unexpected error occurred loading initial data";
+        setError(errorMessage);
+        setCurrentWeather(undefined);
+        setFetchedWeatherForecastData(undefined);
+      } finally {
+        setLoading(false);
+        setSecondaryLocationsLoading(false);
+      }
+    };
+
+    fetchInitialData();
   }, []);
 
   const fetchAutocompleteOptions = useCallback(
@@ -280,20 +338,16 @@ export default function LandingPage() {
           }}
         >
           <SecondaryLocationCard
-            location="Los Angeles"
-            imageURL={""}
-            day={""}
-            temperature={""}
-            wind={""}
-            humidity={""}
+            weatherData={newYorkWeather}
+            isLoading={secondaryLocationsLoading}
+            error={secondaryLocationsError}
+            locationNameIfError="New York"
           />
           <SecondaryLocationCard
-            location="Paris"
-            imageURL={""}
-            day={""}
-            temperature={""}
-            wind={""}
-            humidity={""}
+            weatherData={londonWeather}
+            isLoading={secondaryLocationsLoading}
+            error={secondaryLocationsError}
+            locationNameIfError="London"
           />
         </Stack>
       </Stack>
