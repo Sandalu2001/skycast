@@ -1,4 +1,4 @@
-import { Box, Skeleton, Stack, Typography } from "@mui/material";
+import { Skeleton, Stack, Typography } from "@mui/material";
 import DateCard from "../cards/dateCard";
 import { ForecastData } from "@/lib/weather";
 import StyledContainer from "../common/styleComponent";
@@ -19,10 +19,26 @@ export default function DailyForcastSection({
 }: DailyForcastSectionProps) {
   if (isLoading) {
     return (
-      <Stack sx={{ flexDirection: "row", justifyContent: "space-between" }}>
+      <Stack
+        sx={{
+          flexDirection: "row",
+          justifyContent: "space-between",
+          gap: 1,
+          overflowX: { xs: "auto", md: "inherit" },
+        }}
+      >
         {Array.from({ length: 7 }).map((_, idx) => {
           return (
-            <StyledContainer key={idx} sx={{ px: 2, py: 2, borderRadius: 8 }}>
+            <StyledContainer
+              key={idx}
+              sx={{
+                px: { xs: 2, md: 2 },
+
+                py: 2,
+                borderRadius: 8,
+                width: { xs: 90, md: "auto" },
+              }}
+            >
               <Stack spacing={1} alignItems="center">
                 <Skeleton variant="circular" width={70} height={70} />
                 <Typography variant="h4">
@@ -71,11 +87,12 @@ export default function DailyForcastSection({
         flexDirection: "row",
         justifyContent: "space-between",
         overflowX: { xs: "auto", md: "inherit" },
+        gap: 1,
       }}
     >
       {fetchedWeatherForecastData?.forecast.map((value, index) => {
         return (
-          <Box
+          <Stack
             key={index}
             onClick={() => setSelectedDate(value.date)}
             sx={{
@@ -98,7 +115,7 @@ export default function DailyForcastSection({
                 new Date(selectedDate).toDateString()
               }
             />
-          </Box>
+          </Stack>
         );
       })}
     </Stack>

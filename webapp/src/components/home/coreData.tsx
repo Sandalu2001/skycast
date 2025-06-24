@@ -61,13 +61,17 @@ export default function CoreDataSection({
 
   return (
     <Grid container height={"100%"} spacing={3}>
-      <Grid size={4} height={"100%"} sx={{ borderRadius: 6, px: -3 }}>
+      <Grid
+        size={{ xs: 12, md: 4 }}
+        height={"100%"}
+        sx={{ borderRadius: 6, px: -3 }}
+      >
         <StyledContainer sx={{ gap: 1, p: 2, height: "100%" }}>
           <Typography
             variant="h5"
             sx={{
               pl: 2,
-              pt: 2,
+              py: 2,
               fontWeight: 700,
               color: (theme) =>
                 theme.palette.mode === "dark" ? "white" : "black",
@@ -79,7 +83,7 @@ export default function CoreDataSection({
           </Typography>
 
           {isLoading ? (
-            <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
+            <Stack sx={{ height: 250, p: 2, pt: 1, overflowY: "auto" }}>
               {Array.from({ length: 10 }).map((_, index) => (
                 <Stack key={index}>
                   <Stack
@@ -117,7 +121,7 @@ export default function CoreDataSection({
               ))}
             </Stack>
           ) : (
-            <Stack sx={{ height: "100%", p: 2, pt: 1, overflowY: "auto" }}>
+            <Stack sx={{ height: 250, p: 2, pt: 1, overflowY: "auto" }}>
               {fetchedWeatherForecastData?.forecast
                 .filter(
                   (dailyForecast: DailyForecast) =>
@@ -170,7 +174,14 @@ export default function CoreDataSection({
           )}
         </StyledContainer>
       </Grid>
-      <Grid container size={8} spacing={2} height={"100%"} direction="column">
+      <Grid
+        key={selectedDate}
+        container
+        size={{ xs: 12, md: 8 }}
+        spacing={2}
+        height={"100%"}
+        direction={{ xs: "row", md: "column" }}
+      >
         <Typography
           variant="h5"
           sx={{

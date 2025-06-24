@@ -15,10 +15,10 @@ export default function HightLightData({
   return (
     <>
       <Grid key={index} container sx={{ flexGrow: 3 }} spacing={2}>
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
-              p: 0,
+              p: 1,
               height: "100%",
               display: "flex",
               justifyContent: "center",
@@ -59,10 +59,10 @@ export default function HightLightData({
           </StyledContainer>
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
-              p: 0,
+              p: 1,
               height: "100%",
               display: "flex",
               justifyContent: "center",
@@ -103,10 +103,10 @@ export default function HightLightData({
             </Stack>
           </StyledContainer>
         </Grid>
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
-              p: 0,
+              p: 1,
               height: "100%",
               display: "flex",
               justifyContent: "center",
@@ -117,7 +117,7 @@ export default function HightLightData({
           >
             <Typography
               variant="body1"
-              textAlign={"left"}
+              textAlign={"center"}
               sx={{
                 fontWeight: 700,
                 top: 0,
@@ -176,19 +176,18 @@ export default function HightLightData({
             </Stack>
           </StyledContainer>
         </Grid>
-      </Grid>
-      <Grid container sx={{ flexGrow: 6 }} spacing={2}>
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
+              height: "100%",
               background: (theme) =>
                 `linear-gradient(-45deg, ${theme.palette.primary.main}, ${alpha(
                   theme.palette.primary.main,
                   0.6
                 )})`,
-              height: "100%",
               p: 1,
               gap: 1,
+              justifyContent: "center",
             }}
           >
             <Typography
@@ -225,7 +224,7 @@ export default function HightLightData({
           </StyledContainer>
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               background: (theme) =>
@@ -236,6 +235,7 @@ export default function HightLightData({
               height: "100%",
               p: 1,
               gap: 1,
+              justifyContent: "center",
             }}
           >
             <Typography
@@ -271,7 +271,7 @@ export default function HightLightData({
             </Stack>
           </StyledContainer>
         </Grid>
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               background: (theme) =>
@@ -282,6 +282,7 @@ export default function HightLightData({
               height: "100%",
               p: 1,
               gap: 1,
+              justifyContent: "center",
             }}
           >
             <Typography

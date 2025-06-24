@@ -127,18 +127,18 @@ export default function LandingPage() {
     <Stack
       sx={{
         width: "100%",
-        height: "100%",
-        flexDirection: { xs: "column", md: "row" },
+        height: { xs: "auto", md: "100%" },
+        flexDirection: { xs: "column-reverse", md: "row" },
       }}
     >
       <Stack
         sx={{
-          display: { xs: "none", md: "flex" },
-          p: 8,
+          p: { xs: 5, md: 8 },
           gap: 4,
           flex: 5,
           background: (theme) => theme.palette.background.paper,
-          height: "100%",
+          height: { xs: "auto", md: "100%" },
+          display: { xs: "flex", md: "flex" },
         }}
       >
         <Stack
@@ -149,7 +149,9 @@ export default function LandingPage() {
             justifyContent: "space-around",
           }}
         >
-          <MetaDataSection />
+          <Stack sx={{ display: { xs: "none", md: "flex" } }}>
+            <MetaDataSection />
+          </Stack>
           <DailyForcastSection
             fetchedWeatherForecastData={fetchedWeatherForecastData}
             isLoading={loading}
@@ -168,7 +170,7 @@ export default function LandingPage() {
 
       <Stack
         sx={{
-          height: "100%",
+          height: { xs: "auto", md: "100%" },
           py: { xs: 6, md: 8 },
           pl: { xs: 5, md: 5 },
           pr: { xs: 5, md: 8 },
@@ -177,134 +179,122 @@ export default function LandingPage() {
           flexShrink: 0,
           gap: 3,
           overflow: "hidden",
+          display: { xs: "flex", md: "flex" },
         }}
       >
-        <Stack sx={{ height: "100%", gap: 3 }}>
-          <Stack
-            sx={{
-              display: { xs: "flex", md: "none" },
+        <Stack sx={{ display: { xs: "flex", md: "none" } }}>
+          <MetaDataSection />
+        </Stack>
+
+        <Stack
+          sx={{
+            flexDirection: "row",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <Autocomplete
+            id="location-search-autocomplete"
+            open={autocompleteOpen}
+            onOpen={() => setAutocompleteOpen(true)}
+            onClose={() => setAutocompleteOpen(false)}
+            isOptionEqualToValue={(option, value) => option.id === value.id}
+            getOptionLabel={(option) => `${option.name}, ${option.country}`}
+            options={autocompleteOptions}
+            loading={autocompleteLoading}
+            fullWidth
+            loadingText="Searching locations..."
+            noOptionsText={
+              autocompleteError || "No locations found. Type to search."
+            }
+            onChange={handleAutocompleteChange}
+            onInputChange={(event, newInputValue) => {
+              setInputValue(newInputValue);
             }}
-          >
-            <MetaDataSection />
-          </Stack>
-          <Stack
-            sx={{
-              flexDirection: "row",
-              justifyContent: "space-between",
-              alignItems: "center",
-            }}
-          >
-            <Autocomplete
-              id="location-search-autocomplete"
-              open={autocompleteOpen}
-              onOpen={() => setAutocompleteOpen(true)}
-              onClose={() => setAutocompleteOpen(false)}
-              isOptionEqualToValue={(option, value) => option.id === value.id}
-              getOptionLabel={(option) => `${option.name}, ${option.country}`}
-              options={autocompleteOptions}
-              loading={autocompleteLoading}
-              fullWidth
-              loadingText="Searching locations..."
-              noOptionsText={
-                autocompleteError || "No locations found. Type to search."
-              }
-              onChange={handleAutocompleteChange}
-              onInputChange={(event, newInputValue) => {
-                setInputValue(newInputValue);
-              }}
-              renderInput={(params) => (
-                <TextField
-                  {...params}
-                  label="Search Location"
-                  placeholder="E.g., London"
-                  variant="outlined"
-                  InputProps={{
-                    ...params.InputProps,
-                    startAdornment: (
-                      <InputAdornment position="start">
-                        <SearchRounded />
-                      </InputAdornment>
-                    ),
-                    endAdornment: (
-                      <React.Fragment>
-                        {autocompleteLoading ? (
-                          <CircularProgress color="inherit" size={20} />
-                        ) : null}
-                        {params.InputProps.endAdornment}
-                      </React.Fragment>
-                    ),
-                  }}
-                  sx={{
-                    "& .MuiOutlinedInput-root": {
-                      borderRadius: 5,
-                      backgroundColor: (theme) =>
-                        alpha(theme.palette.action.hover, 0.05),
-                      "& fieldset": {
-                        borderColor: (theme) =>
-                          alpha(theme.palette.grey[500], 0.3),
-                      },
-                      "&:hover fieldset": {
-                        borderColor: (theme) => theme.palette.primary.main,
-                      },
-                      "&.Mui-focused fieldset": {
-                        borderColor: (theme) => theme.palette.primary.main,
-                      },
+            renderInput={(params) => (
+              <TextField
+                {...params}
+                label="Search Location"
+                placeholder="E.g., London"
+                variant="outlined"
+                InputProps={{
+                  ...params.InputProps,
+                  startAdornment: (
+                    <InputAdornment position="start">
+                      <SearchRounded />
+                    </InputAdornment>
+                  ),
+                  endAdornment: (
+                    <React.Fragment>
+                      {autocompleteLoading ? (
+                        <CircularProgress color="inherit" size={20} />
+                      ) : null}
+                      {params.InputProps.endAdornment}
+                    </React.Fragment>
+                  ),
+                }}
+                sx={{
+                  "& .MuiOutlinedInput-root": {
+                    borderRadius: 5,
+                    backgroundColor: (theme) =>
+                      alpha(theme.palette.action.hover, 0.05),
+                    "& fieldset": {
+                      borderColor: (theme) =>
+                        alpha(theme.palette.grey[500], 0.3),
                     },
-                  }}
+                    "&:hover fieldset": {
+                      borderColor: (theme) => theme.palette.primary.main,
+                    },
+                    "&.Mui-focused fieldset": {
+                      borderColor: (theme) => theme.palette.primary.main,
+                    },
+                  },
+                }}
+              />
+            )}
+            renderOption={(props, option) => (
+              <Box component="li" {...props} key={option.id}>
+                <LocationPin
+                  key={option.id}
+                  sx={{ mr: 1, fontSize: "1rem", color: "text.secondary" }}
                 />
-              )}
-              renderOption={(props, option) => (
-                <Box component="li" {...props} key={option.id}>
-                  <LocationPin
-                    key={option.id}
-                    sx={{ mr: 1, fontSize: "1rem", color: "text.secondary" }}
-                  />
-                  {option.name}, {option.region ? `${option.region}, ` : ""}
-                  {option.country}
-                </Box>
-              )}
-            />
-          </Stack>
-
-          <LocationCard
-            fetchedLocationData={currentWeather}
-            isLoading={loading}
-            selectedDate={selectedDate}
+                {option.name}, {option.region ? `${option.region}, ` : ""}
+                {option.country}
+              </Box>
+            )}
           />
+        </Stack>
 
-          <Stack
-            gap={2}
-            sx={{
-              overflowY: "auto",
-              flexGrow: 1,
-              mx: -3,
-            }}
-          >
-            <SecondaryLocationCard
-              location="Los Angeles"
-              imageURL={""}
-              day={""}
-              temperature={""}
-              wind={""}
-              humidity={""}
-            />
-            <SecondaryLocationCard
-              location="Paris"
-              imageURL={""}
-              day={""}
-              temperature={""}
-              wind={""}
-              humidity={""}
-            />
-            <SecondaryLocationCard
-              location="Tokyo"
-              imageURL={""}
-              day={""}
-              temperature={""}
-              wind={""}
-              humidity={""}
-            />
-          </Stack>
+        <LocationCard
+          fetchedLocationData={currentWeather}
+          isLoading={loading}
+          selectedDate={selectedDate}
+        />
+
+        <Stack
+          gap={2}
+          sx={{
+            overflowY: "auto",
+            flexGrow: 1,
+            mx: -3,
+          }}
+        >
+          <SecondaryLocationCard
+            location="Los Angeles"
+            imageURL={""}
+            day={""}
+            temperature={""}
+            wind={""}
+            humidity={""}
+          />
+          <SecondaryLocationCard
+            location="Paris"
+            imageURL={""}
+            day={""}
+            temperature={""}
+            wind={""}
+            humidity={""}
+          />
         </Stack>
       </Stack>
     </Stack>

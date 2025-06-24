@@ -3,17 +3,43 @@
 import * as React from "react";
 import BottomNavigation from "@mui/material/BottomNavigation";
 import BottomNavigationAction from "@mui/material/BottomNavigationAction";
-import RestoreIcon from "@mui/icons-material/Restore";
-import FavoriteIcon from "@mui/icons-material/Favorite";
 import LocationOnIcon from "@mui/icons-material/LocationOn";
 import { useTheme } from "@mui/material/styles";
+import { Search } from "@mui/icons-material";
+import { usePathname, useRouter } from "next/navigation";
+import { useEffect } from "react";
 
 export default function LabelBottomNavigation() {
   const theme = useTheme();
-  const [value, setValue] = React.useState("recents");
+  const router = useRouter();
+  const pathname = usePathname();
+
+  let initialValue = "search";
+  if (pathname === "/search") {
+    initialValue = "search";
+  } else if (pathname === "/forecast") {
+    initialValue = "forecast";
+  }
+
+  const [value, setValue] = React.useState("initialValue");
+
+  useEffect(() => {
+    if (pathname === "/search" && value !== "search") {
+      setValue("search");
+    } else if (pathname === "/forecast" && value !== "forecast") {
+      setValue("forecast");
+    } else if (pathname === "/" && value !== "search") {
+      setValue("search");
+    }
+  }, [pathname, value]);
 
   const handleChange = (event: React.SyntheticEvent, newValue: string) => {
     setValue(newValue);
+    if (newValue === "search") {
+      router.push("/");
+    } else {
+      router.push(`/${newValue}`);
+    }
   };
 
   const getActionStyles = (actionValue: string) => ({
@@ -48,11 +74,10 @@ export default function LabelBottomNavigation() {
       onChange={handleChange}
       sx={{
         display: { xs: "flex", md: "none" },
-        mx: -5,
         position: "fixed",
-        alignSelf: "center",
+        left: "50%",
+        transform: "translateX(-50%)",
         bottom: 30,
-        width: "70%",
         zIndex: 1000,
         height: 70,
         borderRadius: 40,
@@ -61,22 +86,17 @@ export default function LabelBottomNavigation() {
       }}
     >
       <BottomNavigationAction
-        label="Recents"
-        value="recents"
-        icon={<RestoreIcon />}
-        sx={getActionStyles("recents")}
+        label="Location"
+        value="search"
+        icon={<Search />}
+        sx={getActionStyles("search")}
       />
+
       <BottomNavigationAction
-        label="Favorites"
-        value="favorites"
-        icon={<FavoriteIcon />}
-        sx={getActionStyles("favorites")}
-      />
-      <BottomNavigationAction
-        label="Nearby"
-        value="nearby"
+        label="Forecast"
+        value="forecast"
         icon={<LocationOnIcon />}
-        sx={getActionStyles("nearby")}
+        sx={getActionStyles("forecast")}
       />
     </BottomNavigation>
   );

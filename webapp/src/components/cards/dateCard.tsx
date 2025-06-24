@@ -45,21 +45,33 @@ export default function DateCard({
               0px 25px 50px rgba(0, 0, 0, 0.15)
             `,
           },
-          px: 2,
+          px: { xs: 2, md: 2 },
+          width: { xs: 90, md: "auto" },
           py: 2,
           textAlign: "center",
         }}
       >
         <Stack spacing={0} alignItems="center">
-          <Image
-            src={"/images/" + imageURL + ".png"}
-            width={85}
-            height={85}
-            alt="icon"
-          />
+          <Stack display={{ xs: "flex", md: "none" }}>
+            <Image
+              src={"/images/" + imageURL + ".png"}
+              width={50}
+              height={50}
+              alt="icon"
+            />
+          </Stack>
+          <Stack display={{ xs: "none", md: "flex" }}>
+            <Image
+              src={"/images/" + imageURL + ".png"}
+              width={85}
+              height={85}
+              alt="icon"
+            />
+          </Stack>
           <Typography
-            variant="h4"
+            variant="body1"
             sx={{
+              typography: { xs: "body1", md: "h4" },
               color: (theme) =>
                 theme.palette.mode === "dark"
                   ? "white"
@@ -73,6 +85,7 @@ export default function DateCard({
           <Typography
             variant="h5"
             sx={{
+              typography: { xs: "body2", md: "h6" },
               color: (theme) =>
                 theme.palette.mode === "dark"
                   ? "white"
