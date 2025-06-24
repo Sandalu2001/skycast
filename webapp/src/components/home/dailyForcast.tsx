@@ -2,6 +2,7 @@ import { Box, Skeleton, Stack, Typography } from "@mui/material";
 import DateCard from "../cards/dateCard";
 import { ForecastData } from "@/lib/weather";
 import StyledContainer from "../common/styleComponent";
+import Image from "next/image";
 
 export interface DailyForcastSectionProps {
   fetchedWeatherForecastData: ForecastData | undefined;
@@ -39,21 +40,30 @@ export default function DailyForcastSection({
     );
   }
 
-  if (!isLoading && !fetchedWeatherForecastData) {
-    <StyledContainer sx={{ px: 2, py: 2, borderRadius: 8 }}>
-      <Stack spacing={1} alignItems="center">
-        <Skeleton variant="circular" width={70} height={70} />
-        <Typography variant="h4">
-          {" "}
-          <Skeleton variant="text" width={80} />
+  if (!fetchedWeatherForecastData && !isLoading) {
+    return (
+      <StyledContainer
+        sx={{
+          p: 0,
+          height: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+        }}
+      >
+        <Image width={100} height={100} src={"/images/error.png"} alt="error" />
+        <Typography
+          variant="h6"
+          sx={{
+            color: (theme) =>
+              theme.palette.mode === "dark" ? "white" : "black",
+          }}
+        >
+          No data available for {selectedDate}
         </Typography>
-        <Typography variant="h5">
-          <Skeleton variant="text" width={80} />
-        </Typography>
-      </Stack>
-    </StyledContainer>;
+      </StyledContainer>
+    );
   }
-
   return (
     <Stack
       sx={{
