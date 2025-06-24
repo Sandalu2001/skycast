@@ -191,7 +191,7 @@ export default function LandingPage() {
     >
       <Stack
         sx={{
-          p: { xs: 5, md: 8 },
+          p: { xs: 3, md: 8 },
           gap: 4,
           flex: 5,
           background: (theme) => theme.palette.background.paper,
@@ -230,8 +230,8 @@ export default function LandingPage() {
         sx={{
           height: { xs: "auto", md: "100%" },
           py: { xs: 6, md: 8 },
-          pl: { xs: 5, md: 5 },
-          pr: { xs: 5, md: 8 },
+          pl: { xs: 3, md: 5 },
+          pr: { xs: 3, md: 8 },
           flex: 2,
           background: (theme) => theme.palette.background.default,
           flexShrink: 0,
