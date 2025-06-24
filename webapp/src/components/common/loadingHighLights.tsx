@@ -5,8 +5,8 @@ import Image from "next/image";
 export default function LoadingHightLights() {
   return (
     <>
-      <Grid container sx={{ flexGrow: 3 }} spacing={2}>
-        <Grid size={4}>
+      <Grid container spacing={2}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               p: 0,
@@ -50,7 +50,7 @@ export default function LoadingHightLights() {
           </StyledContainer>
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               p: 0,
@@ -94,7 +94,7 @@ export default function LoadingHightLights() {
             </Stack>
           </StyledContainer>
         </Grid>
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               p: 0,
@@ -167,9 +167,8 @@ export default function LoadingHightLights() {
             </Stack>
           </StyledContainer>
         </Grid>
-      </Grid>
-      <Grid container sx={{ flexGrow: 6 }} spacing={2}>
-        <Grid size={4}>
+
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               background: (theme) =>
@@ -216,7 +215,7 @@ export default function LoadingHightLights() {
           </StyledContainer>
         </Grid>
 
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               background: (theme) =>
@@ -262,7 +261,7 @@ export default function LoadingHightLights() {
             </Stack>
           </StyledContainer>
         </Grid>
-        <Grid size={4}>
+        <Grid size={{ xs: 6, md: 4 }}>
           <StyledContainer
             sx={{
               background: (theme) =>
