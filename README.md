@@ -22,7 +22,6 @@ SkyCast is a simple and elegant web application that displays the current weathe
     *   [React](https://reactjs.org/)
     *   [TypeScript](https://www.typescriptlang.org/)
     *   [Material-UI (MUI)](https://mui.com/) for UI components and styling
-    *   [Axios](https://axios-http.com/) (or built-in `fetch`) for API calls
 *   **API:**
     *   [WeatherAPI.com](https://www.weatherapi.com/) for weather data
 *   **Deployment:**
@@ -45,7 +44,7 @@ Follow these instructions to get a copy of the project up and running on your lo
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/Sandalu2001/skycast.git # 
+    git clone https://github.com/Sandalu2001/skycast.git 
     cd webapp 
     ```
 
