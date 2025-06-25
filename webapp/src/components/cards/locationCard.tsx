@@ -4,6 +4,7 @@ import { alpha, Skeleton, Stack, Typography } from "@mui/material";
 import Image from "next/image";
 import WindPowerIcon from "@mui/icons-material/WindPower";
 import WaterDropIcon from "@mui/icons-material/WaterDrop";
+import FlareIcon from "@mui/icons-material/Flare";
 import { CurrentWeatherData } from "@/lib/weather";
 import StyledContainer from "../common/styleComponent";
 
@@ -168,6 +169,20 @@ export default function LocationCard({
             </Stack>
             <Typography variant="body1">
               {fetchedLocationData?.humidity}
+            </Typography>
+          </Stack>
+          <Stack
+            flexDirection={"row"}
+            alignItems="center"
+            gap={5}
+            sx={{ color: "white" }}
+          >
+            <Stack flexDirection={"row"} alignItems="center" gap={1}>
+              <FlareIcon />
+              <Typography variant="body1">UV Index</Typography>
+            </Stack>
+            <Typography variant="body1">
+              {fetchedLocationData?.uvIndex}
             </Typography>
           </Stack>
         </Stack>

@@ -24,6 +24,7 @@ export default function DailyForcastSection({
           flexDirection: "row",
           justifyContent: "space-between",
           gap: 1,
+          overflowY: "inherit",
           overflowX: { xs: "auto", md: "inherit" },
         }}
       >
@@ -86,6 +87,8 @@ export default function DailyForcastSection({
         background: (theme) => theme.palette.background.paper,
         flexDirection: "row",
         justifyContent: "space-between",
+        overflowY: "inherit",
+
         overflowX: { xs: "auto", md: "inherit" },
         gap: 1,
       }}
